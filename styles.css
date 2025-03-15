@@ -244,11 +244,12 @@ form button:hover {
 @media (max-width: 768px) {
     .hamburger {
         display: flex;
+        z-index: 1001; /* 确保按钮在最上层 */
     }
     
     .nav-menu {
         position: fixed;
-        top: 70px;
+        top: 60px; /* 根据导航栏高度调整 */
         left: 0;
         right: 0;
         background: var(--nav-bg);
@@ -257,10 +258,23 @@ form button:hover {
         padding: 1rem 0;
         display: none;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        max-height: calc(100vh - 60px);
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch; /* 平滑滚动 */
     }
     
     .nav-menu.active {
         display: flex;
+    }
+    
+    .nav-menu li {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .nav-link {
+        padding: 15px;
+        display: block;
     }
     
     .hamburger.active span:nth-child(1) {
@@ -465,4 +479,4 @@ form button:hover {
     .package-tier {
         gap: 1rem;
     }
-} 
+}
