@@ -7,7 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const navMenu = navMenus[index];
 
         if (hamburger && navMenu) {
-            hamburger.addEventListener('click', () => {
+            hamburger.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent event bubbling
                 hamburger.classList.toggle('active');
                 navMenu.classList.toggle('active');
             });
