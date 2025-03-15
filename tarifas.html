@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarifas - PatitoLand Parc</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img src="images/logo.png" alt="PatitoLand Parc Logo" width="120">
+            </a>
+            
+            <button class="hamburger" aria-label="Abrir menú">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">Inicio</a></li>
+                <li><a href="atracciones.html" class="nav-link">Atracciones</a></li>
+                <li><a href="eventos.html" class="nav-link">Eventos</a></li>
+                <li><a href="galeria.html" class="nav-link">Galería</a></li>
+                <li><a href="tarifas.html" class="nav-link active">Tarifas</a></li>
+                <li><a href="cumpleanos.html" class="nav-link">Cumpleaños</a></li>
+                <li><a href="contacto.html" class="nav-link">Contacto</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="tarifas-section" aria-labelledby="tarifas-heading">
+        <h2 id="tarifas-heading">TARIFAS</h2>
+        
+        <article class="price-table">
+            <h3>LUNES A JUEVES</h3>
+            <div class="price-columns">
+                <div class="price-group">
+                    <div class="time-price" role="listitem">
+                        <span>1 HORA</span>
+                        <span>8 €</span>
+                    </div>
+                    <div class="time-price" role="listitem">
+                        <span>2 HORAS</span>
+                        <span>13 €</span>
+                    </div>
+                </div>
+        
+                <div class="price-group">
+                    <div class="time-price" role="listitem">
+                        <span>30 MIN</span>
+                        <span>3 €</span>
+                    </div>
+                    <div class="time-price" role="listitem">
+                        <span>1 HORA</span>
+                        <span>6 €</span>
+                    </div>
+                </div>
+            </div>
+        </article>
+        
+        <aside class="notes" aria-labelledby="notas-heading">
+            <p class="highlight" id="notas-heading">TIEMPO ADICIONAL</p>
+            <p>NOTA: A PARTIR DE LOS 15 MINUTOS SE CONTARÁ COMO MEDIA HORA ADICIONAL Y A PARTIR DE 40 MINUTOS SE CONTARÁ COMO 1 HORA ADICIONAL.</p>
+            
+            <div class="special-rate">
+                <p>TARIFA MENORES DE 2 AÑOS: <strong>4 €</strong></p>
+                <p>CALCETINES ANTIDESLIZANTES: <strong>2 €</strong></p>
+            </div>
+        </aside>
+        
+        <footer class="contact-info">
+            <p>INFORMACIÓN: <a href="tel:603315576" aria-label="Llamar al 603 31 55 76">603 31 55 76</a></p>
+        </footer>
+    </section>
+
+    <script src="scripts.js"></script>
+</body>
+</html>

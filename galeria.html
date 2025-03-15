@@ -7,28 +7,39 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header>
-        <nav>
-            <ul>
-                <li><a href="index.html">Inicio</a></li>
-                <li><a href="atracciones.html">Atracciones</a></li>
-                <li><a href="eventos.html">Eventos</a></li>
-                <li><a href="galeria.html">Galería</a></li>
-                <li><a href="contacto.html">Contacto</a></li>
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img src="images/logo.png" alt="PatitoLand Parc Logo" width="120">
+            </a>
+            
+            <button class="hamburger" aria-label="Abrir menú">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">Inicio</a></li>
+                <li><a href="atracciones.html" class="nav-link">Atracciones</a></li>
+                <li><a href="eventos.html" class="nav-link">Eventos</a></li>
+                <li><a href="galeria.html" class="nav-link active">Galería</a></li>
+                <li><a href="tarifas.html" class="nav-link">Tarifas</a></li>
+                <li><a href="cumpleanos.html" class="nav-link">Cumpleaños</a></li>
+                <li><a href="contacto.html" class="nav-link">Contacto</a></li>
             </ul>
-        </nav>
-    </header>
+        </div>
+    </nav>
 
     <main>
         <section id="galeria">
             <h2>Galería de Fotos</h2>
             <div class="galeria-grid">
-                <img src="img/galeria1.jpg" alt="Foto 1">
-                <img src="img/galeria2.jpg" alt="Foto 2">
-                <img src="img/galeria3.jpg" alt="Foto 3">
-                <img src="img/galeria4.jpg" alt="Foto 4">
-                <img src="img/galeria5.jpg" alt="Foto 5">
-                <img src="img/galeria6.jpg" alt="Foto 6">
+                <img src="img/1.jpeg" alt="Foto 1">
+                <img src="img/2.jpeg" alt="Foto 2">
+                <img src="img/3.jpeg" alt="Foto 3">
+                <img src="img/4.jpeg" alt="Foto 4">
+                <img src="img/5.jpeg" alt="Foto 5">
             </div>
         </section>
     </main>
