@@ -247,8 +247,8 @@ form button:hover {
     }
     
     .nav-menu {
-        position: absolute;
-        top: 100%;
+        position: fixed;
+        top: 70px;
         left: 0;
         right: 0;
         background: var(--nav-bg);
@@ -256,6 +256,7 @@ form button:hover {
         align-items: center;
         padding: 1rem 0;
         display: none;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
     
     .nav-menu.active {
