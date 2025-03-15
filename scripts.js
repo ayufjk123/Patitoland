@@ -1,47 +1,56 @@
-// 增强版导航栏交互
+// 移动端导航栏通用解决方案
 document.addEventListener('DOMContentLoaded', () => {
-    // 菜单切换逻辑
-    const setupMenu = (hamburger, navMenu) => {
-        const toggleMenu = () => {
-            hamburger.classList.toggle('active');
-            navMenu.classList.toggle('active');
-        };
+    // 通用菜单控制器
+    const menuController = () => {
+        const hamburgers = document.querySelectorAll('.hamburger');
+        const navMenus = document.querySelectorAll('.nav-menu');
 
-        // 点击汉堡菜单
-        hamburger.addEventListener('click', (e) => {
-            e.stopPropagation();
-            toggleMenu();
-        });
+        hamburgers.forEach((hamburger, index) => {
+            const navMenu = navMenus[index];
 
-        // 触摸事件支持
-        hamburger.addEventListener('touchstart', (e) => {
-            e.stopPropagation();
-            toggleMenu();
-        });
+            const toggleMenu = (e) => {
+                e.stopPropagation();
+                hamburger.classList.toggle('active');
+                navMenu.classList.toggle('active');
+            };
 
-        // 点击外部区域关闭菜单
-        document.addEventListener('click', (e) => {
-            if (!navMenu.contains(e.target) && !hamburger.contains(e.target)) {
-                hamburger.classList.remove('active');
-                navMenu.classList.remove('active');
-            }
-        });
+            // 桌面端+移动端双事件支持
+            hamburger.addEventListener('click', toggleMenu);
+            hamburger.addEventListener('touchstart', toggleMenu);
 
-        // 菜单项点击后自动关闭菜单
-        navMenu.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', () => {
-                hamburger.classList.remove('active');
-                navMenu.classList.remove('active');
+            // 自动关闭逻辑
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.nav-container')) {
+                    hamburger.classList.remove('active');
+                    navMenu.classList.remove('active');
+                }
+            });
+
+            // 菜单项点击处理
+            navMenu.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    hamburger.classList.remove('active');
+                    navMenu.classList.remove('active');
+                });
             });
         });
     };
 
-    // 为每个导航实例初始化
-    document.querySelectorAll('.nav-container').forEach(container => {
-        const hamburger = container.querySelector('.hamburger');
-        const navMenu = container.querySelector('.nav-menu');
-        if (hamburger && navMenu) {
-            setupMenu(hamburger, navMenu);
+    // 初始化所有页面菜单
+    menuController();
+
+    // 动态加载页面兼容处理
+    if (window.attachEvent) {
+        window.attachEvent('onload', menuController);
+    } else {
+        if (window.onload) {
+            const currentOnload = window.onload;
+            window.onload = function(e) {
+                currentOnload(e);
+                menuController();
+            };
+        } else {
+            window.onload = menuController;
         }
-    });
+    }
 });
