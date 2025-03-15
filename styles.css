@@ -180,6 +180,7 @@ form button:hover {
   --nav-transition: all 0.3s ease;
 }
 
+/* Navbar Styles */
 .main-nav {
     background-color: var(--nav-bg);
     padding: 1rem 0;
@@ -239,6 +240,7 @@ form button:hover {
     transition: var(--nav-transition);
 }
 
+/* Mobile Styles */
 @media (max-width: 768px) {
     .hamburger {
         display: flex;
