@@ -8,7 +8,6 @@ body {
 }
 
 header {
-    background-color: #ffcc00;
     padding: 20px;
     text-align: center;
 }
@@ -182,7 +181,7 @@ form button:hover {
 
 /* Navbar Styles */
 .main-nav {
-    background-color: var(--nav-bg);
+    background-color: #93a1ac;
     padding: 1rem 0;
     position: sticky;
     top: 0;
@@ -207,7 +206,7 @@ form button:hover {
 }
 
 .nav-link {
-    color: var(--nav-text);
+    color: #333;
     text-decoration: none;
     padding: 0.5rem 1rem;
     border-radius: 4px;
