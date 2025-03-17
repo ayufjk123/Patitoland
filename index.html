@@ -88,45 +88,88 @@
             </div>
         </section>
 
-        <section class="integrated-tarifas">
+        <section class="smart-tarifas">
             <div class="tarifas-container">
                 <h2 class="section-title">Nuestras Tarifas</h2>
                 
-                <div class="price-highlight-cards">
-                    <div class="price-card">
-                        <h3>🕒 Entrada Básica</h3>
-                        <div class="price-item">
-                            <span>1 Hora</span>
-                            <span class="price">8€</span>
+                <!-- 价格切换选项卡 -->
+                <div class="tarifas-tabs">
+                    <button class="tab-btn active" data-tab="general">General</button>
+                    <button class="tab-btn" data-tab="promociones">Promociones</button>
+                    <button class="tab-btn" data-tab="normas">Normas</button>
+                </div>
+        
+                <!-- 常规价格 -->
+                <div class="tab-content active" id="general">
+                    <div class="time-grid">
+                        <div class="time-card">
+                            <div class="time-header">
+                                <i class="fas fa-clock"></i>
+                                <h3>Lunes-Jueves</h3>
+                            </div>
+                            <div class="price-list">
+                                <div class="price-item popular">
+                                    <span>1 hora</span>
+                                    <span class="price">8€</span>
+                                    <span class="badge">+ vendido</span>
+                                </div>
+                                <div class="price-item">
+                                    <span>2 horas</span>
+                                    <span class="price">13€</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="price-item popular">
-                            <span>2 Horas</span>
-                            <span class="price">13€</span>
-                            <span class="badge">Más Popular</span>
-                        </div>
-                    </div>
-
-                    <div class="price-card discount-card">
-                        <h3>🎉 Promoción Especial</h3>
-                        <div class="price-item">
-                            <span>Lunes-Jueves</span>
-                            <span class="price">30min 3€</span>
-                        </div>
-                        <div class="price-item">
-                            <span>1 Hora Extra</span>
-                            <span class="price">+6€</span>
+                        
+                        <div class="time-card weekend">
+                            <div class="time-header">
+                                <i class="fas fa-sun"></i>
+                                <h3>Fin de Semana</h3>
+                            </div>
+                            <div class="price-list">
+                                <div class="price-item">
+                                    <span>1 hora</span>
+                                    <span class="price">10€</span>
+                                </div>
+                                <div class="price-item">
+                                    <span>2 horas</span>
+                                    <span class="price">17€</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-
-                <div class="tarifas-notes">
-                    <div class="note-box">
-                        <i class="fas fa-info-circle"></i>
-                        <p>Menores de 2 años: <strong>4€</strong></p>
+        
+                <!-- 促销信息 -->
+                <div class="tab-content" id="promociones">
+                    <div class="promo-card">
+                        <div class="promo-header">
+                            <span class="discount-tag">-20%</span>
+                            <h4>Mañanas Educativas</h4>
+                        </div>
+                        <p>De lunes a jueves antes de las 12:00</p>
+                        <div class="price-compare">
+                            <span class="old-price">10€</span>
+                            <span class="new-price">8€</span>
+                        </div>
+                        <button class="cta-btn">Reservar Oferta</button>
                     </div>
-                    <div class="note-box">
-                        <i class="fas fa-socks"></i>
-                        <p>Calcetines antideslizantes: <strong>2€</strong></p>
+                </div>
+        
+                <!-- 注意事项 -->
+                <div class="tab-content" id="normas">
+                    <div class="rules-list">
+                        <div class="rule-item">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p>Los primeros 15 minutos extras se consideran media hora adicional</p>
+                        </div>
+                        <div class="rule-item">
+                            <i class="fas fa-baby"></i>
+                            <p>Menores de 2 años: tarifa especial de 4€</p>
+                        </div>
+                        <div class="rule-item">
+                            <i class="fas fa-socks"></i>
+                            <p>Calcetines antideslizantes obligatorios (2€)</p>
+                        </div>
                     </div>
                 </div>
             </div>

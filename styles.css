@@ -753,26 +753,34 @@ video {
     display: flex;
     gap: 1rem;
     font-size: 1.5rem;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin: 0 auto;
 }
 
 .live-bar {
-    background: #FF6B6B;
-    color: white;
-    padding: 1rem;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    background-color: #FF6B6B;
+    padding: 10px 0;
+    position: relative;
 }
 
 .marquee {
-    white-space: nowrap;
-    overflow: hidden;
-    animation: marquee 20s linear infinite;
+    display: inline-block;
+    padding-left: 100%;
+    animation: marquee 25s linear infinite;
 }
 
 @keyframes marquee {
-    0% { transform: translateX(100%); }
-    100% { transform: translateX(-100%); }
+    0% {
+        transform: translateX(100%);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
 }
 
 @media (max-width: 768px) {
@@ -922,4 +930,132 @@ body::after {
         flex-direction: column;
         text-align: center;
     }
+}
+
+/* 智能价格表样式 */
+.smart-tarifas {
+    padding: 4rem 2rem;
+    background: #f8f9fa;
+}
+
+.tarifas-tabs {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.tab-btn {
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 30px;
+    background: #e9ecef;
+    color: #6c757d;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tab-btn.active {
+    background: #ff6b6b;
+    color: white;
+    box-shadow: 0 4px 15px rgba(255,107,107,0.3);
+}
+
+.time-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.time-card {
+    background: white;
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease;
+}
+
+.time-card:hover {
+    transform: translateY(-5px);
+}
+
+.time-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #f1f3f5;
+}
+
+.time-header i {
+    font-size: 1.5rem;
+    color: #ff6b6b;
+}
+
+.price-list {
+    display: grid;
+    gap: 1rem;
+}
+
+.price-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.price-item.popular {
+    background: linear-gradient(135deg, #fff9f2 0%, #fff 100%);
+    border: 2px solid #ffd700;
+}
+
+.badge {
+    background: #ff6b6b;
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 15px;
+    font-size: 0.8em;
+}
+
+/* 响应式优化 */
+@media (max-width: 768px) {
+    .tarifas-tabs {
+        flex-direction: column;
+    }
+    
+    .time-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 交互效果 */
+.tab-content {
+    display: none;
+    animation: fadeIn 0.5s ease;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.footer-section ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-section li {
+    margin-bottom: 0.5rem;
+}
+
+.footer-section li:last-child {
+    margin-bottom: 0;
 }

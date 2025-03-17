@@ -39,3 +39,17 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        // 移除所有激活状态
+        document.querySelectorAll('.tab-btn, .tab-content').forEach(el => {
+            el.classList.remove('active');
+        });
+        
+        // 添加当前激活状态
+        this.classList.add('active');
+        const tabId = this.dataset.tab;
+        document.getElementById(tabId).classList.add('active');
+    });
+});
