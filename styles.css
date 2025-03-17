@@ -664,7 +664,7 @@ video {
     align-items: center;
     justify-content: center;
     text-align: center;
-    color: white;
+    color: #333;
     padding: 0 20px;
 }
 
@@ -699,12 +699,12 @@ video {
 
 .primary-cta {
     background: #FF6B6B;
-    color: white;
+    color: #333;
 }
 
 .secondary-cta {
     background: rgba(255,255,255,0.2);
-    color: white;
+    color: #333;
     border: 2px solid white;
 }
 
