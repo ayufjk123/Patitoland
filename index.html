@@ -3,15 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PatitoLand Parc - Inicio</title>
+    <title>PatitoLand Parc - Parque de Ocio Familiar</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header>
+    <img src="img/logo_no_bg.png" class="logo-background" alt="background pattern">
+    <header class="sticky-header">
         <nav class="main-nav">
             <div class="nav-container container">
                 <a href="index.html" class="logo">
-                    <img src="img/logo_no_bg.png" alt="PatitoLand Parc Logo" width="120">
+                    <img src="img/logo_no_bg.png" alt="PatitoLand Parc Logo" width="140">
                 </a>
                 
                 <button class="hamburger" aria-label="Abrir menú">
@@ -34,25 +36,153 @@
     </header>
 
     <main>
-        <section id="inicio">
-            <h1>Bienvenidos a PatitoLand Parc</h1>
-            <p>¡Diversión para toda la familia!</p>
-            <div class="cta-buttons">
-                <a href="atracciones.html" class="btn-explorar">Explora nuestras atracciones</a>
-                <a href="tarifas.html" class="btn-tarifas">Consulta nuestras tarifas</a>
-                <a href="cumpleanos.html" class="btn-cumpleanos">Celebra tu cumpleaños</a>
+        <!-- 英雄区域 -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <h1 class="hero-title">¡Diversión en Grande!</h1>
+                <p class="hero-subtitle">El mejor parque infantil de la ciudad</p>
+                
+                <div class="cta-container">
+                    <a href="tarifas.html" class="cta-btn primary-cta">
+                        <i class="fas fa-ticket-alt"></i>
+                        Reservar Ahora
+                    </a>
+                    <a href="atracciones.html" class="cta-btn secondary-cta">
+                        <i class="fas fa-map-marked-alt"></i>
+                        Ver Atracciones
+                    </a>
+                </div>
             </div>
         </section>
+
+        <!-- 特色服务 -->
+        <section class="features-section">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-birthday-cake"></i>
+                </div>
+                <h3>Cumpleaños Mágicos</h3>
+                <p>Celebra tu fiesta con paquetes especiales</p>
+                <a href="cumpleanos.html" class="feature-link">Más información →</a>
+            </div>
+
+            <div class="feature-card highlight-card">
+                <div class="feature-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <h3>Horario Extendido</h3>
+                <p>Abierto hasta las 22:00 los fines de semana</p>
+                <div class="opening-hours">
+                    <p>Lun-Vie: 10:00 - 20:00</p>
+                    <p>Sab-Dom: 09:00 - 22:00</p>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3>Seguridad Garantizada</h3>
+                <p>Espacios certificados y monitoreo 24/7</p>
+                <a href="contacto.html" class="feature-link">Ver certificaciones →</a>
+            </div>
+        </section>
+
+        <section class="integrated-tarifas">
+            <div class="tarifas-container">
+                <h2 class="section-title">Nuestras Tarifas</h2>
+                
+                <div class="price-highlight-cards">
+                    <div class="price-card">
+                        <h3>🕒 Entrada Básica</h3>
+                        <div class="price-item">
+                            <span>1 Hora</span>
+                            <span class="price">8€</span>
+                        </div>
+                        <div class="price-item popular">
+                            <span>2 Horas</span>
+                            <span class="price">13€</span>
+                            <span class="badge">Más Popular</span>
+                        </div>
+                    </div>
+
+                    <div class="price-card discount-card">
+                        <h3>🎉 Promoción Especial</h3>
+                        <div class="price-item">
+                            <span>Lunes-Jueves</span>
+                            <span class="price">30min 3€</span>
+                        </div>
+                        <div class="price-item">
+                            <span>1 Hora Extra</span>
+                            <span class="price">+6€</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tarifas-notes">
+                    <div class="note-box">
+                        <i class="fas fa-info-circle"></i>
+                        <p>Menores de 2 años: <strong>4€</strong></p>
+                    </div>
+                    <div class="note-box">
+                        <i class="fas fa-socks"></i>
+                        <p>Calcetines antideslizantes: <strong>2€</strong></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 动态公告 -->
+        <div class="live-bar">
+            <div class="marquee">
+                <span>🔥 AHORA EN PROMOCIÓN: Paga 8€ i juega 2 horas de lunes a jueves 🔥</span>
+            </div>
+        </div>
     </main>
 
-    <footer>
-        <div class="redes-sociales">
-            <a href="https://www.instagram.com/patitoland.parc/" target="_blank">Instagram</a>
-            <a href="https://www.facebook.com/patitoland.parc/" target="_blank">Facebook</a>
-            <a href="https://twitter.com/patitolandparc" target="_blank">Twitter</a>
+    <footer class="modern-footer">
+        <div class="footer-grid">
+            <div class="footer-section">
+                <h4>Contacto</h4>
+                <p><i class="fas fa-map-marker-alt"></i> Carrer de colom 453, nave 52, 08223 - Terrassa Barcelona</p>
+                <p><i class="fas fa-phone"></i> <a href="tel:603315576">603 31 55 76</a></p>
+                <p><i class="fas fa-envelope"></i> info@patitoland.es</p>
+            </div>
+
+            <div class="footer-section">
+                <h4>Enlaces Rápidos</h4>
+                <ul>
+                    <li><a href="preguntas-frecuentes.html">FAQ</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="trabaja-con-nosotros.html">Carreras</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4>Síguenos</h4>
+                <div class="social-links">
+                    <a href="https://www.instagram.com/patitoland.parc/" target="_blank">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://www.facebook.com/patitoland.parc/" target="_blank">
+                        <i class="fab fa-facebook"></i>
+                    </a>
+                    <a href="https://twitter.com/patitolandparc" target="_blank">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                </div>
+            </div>
         </div>
-        <p>©2024 PatitoLand Parc. Todos los derechos reservados.</p>
+
+        <div class="footer-bottom">
+            <p>©2024 PatitoLand Parc. Todos los derechos reservados.</p>
+            <div class="legal-links">
+                <a href="politica-privacidad.html">Política de Privacidad</a>
+                <a href="terminos-uso.html">Términos de Uso</a>
+            </div>
+        </div>
     </footer>
+
     <script src="scripts.js"></script>
 </body>
 </html>
