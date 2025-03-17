@@ -172,11 +172,11 @@ form button:hover {
 }
 
 :root {
-  --nav-bg: #2c3e50;
-  --nav-text: #ffffff;
-  --nav-hover: #e67e22;
-  --nav-active: #d35400;
-  --nav-transition: all 0.3s ease;
+    --nav-bg: #2c3e50; /* 导航栏背景颜色 */
+    --nav-text: #333; /* 导航栏文字颜色 */
+    --nav-hover: #34495e; /* 导航栏悬停背景颜色 */
+    --nav-active: #1abc9c; /* 导航栏激活背景颜色 */
+    --nav-transition: all 0.3s ease;
 }
 
 /* Navbar Styles */
@@ -263,13 +263,10 @@ form button:hover {
         background: var(--nav-bg, #2c3e50);
         flex-direction: column;
         align-items: center;
-        padding: 0;
+        padding: 1rem 0;
         display: none;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         z-index: 999;
-        max-height: calc(100vh - 60px);
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
     }
     
     .nav-menu.active {
@@ -279,17 +276,15 @@ form button:hover {
     .nav-menu li {
         width: 100%;
         text-align: center;
-        margin: 0;
     }
     
     .nav-link {
         padding: 15px !important;
         display: block;
         width: 100%;
-        color: var(--nav-text, #ffffff) !important;
+        color: var(--nav-text, #333) !important;
         text-decoration: none;
         transition: background-color 0.3s ease;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
     
     .nav-link:hover {
