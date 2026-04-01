@@ -21,6 +21,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: relative;
 }
 
 .logo img {
@@ -201,24 +202,24 @@
   }
 
   .nav-menu {
-    position: fixed;
-    top: 70px;
+    position: absolute;
+    top: 100%;
     left: 0;
     right: 0;
     background: #ffffff;
     flex-direction: column;
     align-items: center;
-    padding: 2rem 0;
+    padding: 1.5rem 0;
     display: none;
-    box-shadow: var(--shadow-hover);
-    z-index: 999;
-    gap: 1rem;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    z-index: 998;
+    gap: 0.5rem;
     border-bottom-left-radius: var(--radius-lg);
     border-bottom-right-radius: var(--radius-lg);
 
     &.active {
       display: flex;
-      animation: fade-up 0.4s ease forwards;
+      animation: fade-up 0.3s ease forwards;
     }
 
     li {
@@ -227,10 +228,10 @@
     }
 
     .nav-link {
-      padding: 15px;
+      padding: 12px 15px;
       display: inline-block;
       width: auto;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
     }
   }
 }
