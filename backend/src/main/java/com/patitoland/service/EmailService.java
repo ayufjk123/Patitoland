@@ -1,8 +1,11 @@
 package com.patitoland.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.patitoland.model.Booking;
@@ -12,6 +15,8 @@ import java.time.format.DateTimeFormatter;
 
 @Service
 public class EmailService {
+
+    private static final Logger log = LoggerFactory.getLogger(EmailService.class);
 
     private final JavaMailSender mailSender;
 
@@ -40,6 +45,7 @@ public class EmailService {
         mailSender.send(message);
     }
 
+    @Async
     public void sendBookingConfirmation(Booking booking) {
         String roomLabel = "SALA_PRIVADA".equals(booking.getRoomPreference())
                 ? "Sala Privada" : "Zona Restauración";
@@ -67,9 +73,15 @@ public class EmailService {
             booking.getChildrenCount(),
             booking.getPhone()
         ));
-        mailSender.send(message);
+        try {
+            mailSender.send(message);
+            log.info("Booking confirmation email sent to {}", booking.getEmail());
+        } catch (Exception e) {
+            log.error("Failed to send booking confirmation to {}: {}", booking.getEmail(), e.getMessage());
+        }
     }
 
+    @Async
     public void sendBookingNotification(Booking booking) {
         String roomLabel = "SALA_PRIVADA".equals(booking.getRoomPreference())
                 ? "Sala Privada" : "Zona Restauración";
@@ -98,6 +110,11 @@ public class EmailService {
             booking.getChildrenCount(),
             booking.getNotes() != null ? booking.getNotes() : "-"
         ));
-        mailSender.send(message);
+        try {
+            mailSender.send(message);
+            log.info("Booking notification email sent to admin");
+        } catch (Exception e) {
+            log.error("Failed to send booking notification to admin: {}", e.getMessage());
+        }
     }
 }

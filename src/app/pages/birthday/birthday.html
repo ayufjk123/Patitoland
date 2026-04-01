@@ -55,8 +55,20 @@
   <div class="included-section animate-fade-up delay-600">
     <h3>{{ 'BIRTHDAY_PAGE.INCLUDED_ITEMS' | translate }}</h3>
     <div class="included-grid">
-      <div class="included-item"><i class="fas fa-bread-slice"></i> {{ 'BIRTHDAY_PAGE.SANDWICHES' | translate }}</div>
-      <div class="included-item"><i class="fas fa-glass-water"></i> {{ 'BIRTHDAY_PAGE.JUICE' | translate }}</div>
+      <div class="included-item has-options">
+        <i class="fas fa-bread-slice"></i>
+        <div>
+          <span>{{ 'BIRTHDAY_PAGE.SANDWICHES' | translate }}</span>
+          <small class="item-options">{{ 'BIRTHDAY_PAGE.SANDWICHES_OPTIONS' | translate }}</small>
+        </div>
+      </div>
+      <div class="included-item has-options">
+        <i class="fas fa-glass-water"></i>
+        <div>
+          <span>{{ 'BIRTHDAY_PAGE.JUICE' | translate }}</span>
+          <small class="item-options">{{ 'BIRTHDAY_PAGE.JUICE_OPTIONS' | translate }}</small>
+        </div>
+      </div>
       <div class="included-item"><i class="fas fa-bottle-water"></i> {{ 'BIRTHDAY_PAGE.WATER' | translate }}</div>
       <div class="included-item"><i class="fas fa-socks"></i> {{ 'BIRTHDAY_PAGE.SOCKS' | translate }}</div>
       <div class="included-item"><i class="fas fa-candy-cane"></i> {{ 'BIRTHDAY_PAGE.CANDY' | translate }}</div>

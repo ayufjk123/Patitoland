@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { LanguageService } from '../../services/language';
@@ -12,8 +12,17 @@ import { AsyncPipe, UpperCasePipe } from '@angular/common';
 })
 export class Navbar {
   menuOpen = false;
+  langMenuOpen = false;
 
   constructor(public langService: LanguageService) {}
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.custom-lang-selector')) {
+      this.langMenuOpen = false;
+    }
+  }
 
   toggleMenu(): void {
     this.menuOpen = !this.menuOpen;
@@ -22,12 +31,6 @@ export class Navbar {
   closeMenu(): void {
     this.menuOpen = false;
   }
-
-  toggleLang(): void {
-    this.langService.toggleLanguage();
-  }
-
-  langMenuOpen = false;
 
   toggleLangMenu(): void {
     this.langMenuOpen = !this.langMenuOpen;

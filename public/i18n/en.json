@@ -43,6 +43,25 @@
   "MARQUEE": {
     "TEXT": "🔥 PROMOTION! Pay 8€ and play 2 hours from Monday to Thursday 🔥"
   },
+  "FAQ": {
+    "TITLE": "Frequently Asked Questions",
+    "Q1": "What ages is the park suitable for?",
+    "A1": "Our park is designed for children aged 1 to 12. Children under 2 must be accompanied by an adult in the play area.",
+    "Q2": "Are anti-slip socks mandatory?",
+    "A2": "Yes, anti-slip socks are mandatory for both children and adults in the play area. You can buy them at reception for 2€.",
+    "Q3": "Can we bring outside food or drinks?",
+    "A3": "Outside food and drinks are not allowed. We have a catering service with a variety of options for adults and children.",
+    "Q4": "How can I book a birthday party?",
+    "A4": "You can book through our booking calendar in the Birthday section, or contact us directly by phone or WhatsApp at 603 31 55 76.",
+    "Q5": "What is included in the birthday package?",
+    "A5": "All packages include sandwiches (ham & cheese, Nutella or hotdog), juices, water, anti-slip socks, candy bag and chips to share. Cake is NOT included.",
+    "Q6": "What are the park's opening hours?",
+    "A6": "Monday to Friday from 17:00 to 21:00. Saturdays, Sundays and holidays from 11:00 to 21:00.",
+    "Q7": "Can we leave and re-enter freely?",
+    "A7": "No, free entry and exit is not allowed once inside the park. The contracted time starts counting from the moment of entry.",
+    "Q8": "Where are you located?",
+    "A8": "We are at Carrer de Colom 453, Nave D52, Terrassa. We look forward to seeing you!"
+  },
   "BIRTHDAY_PAGE": {
     "TITLE": "Birthday Pricing",
     "INCLUDES": "All packages include",
@@ -57,7 +76,9 @@
     "WEEKDAY_NOTE": "Weekdays: unlimited play and room time",
     "INCLUDED_ITEMS": "Included in all packages",
     "SANDWICHES": "Sandwiches",
+    "SANDWICHES_OPTIONS": "Ham & cheese, Nutella or Hotdog",
     "JUICE": "Juices",
+    "JUICE_OPTIONS": "Pineapple, apple, peach or orange",
     "WATER": "Small water bottles",
     "SOCKS": "Anti-slip socks",
     "CANDY": "Candy bag",

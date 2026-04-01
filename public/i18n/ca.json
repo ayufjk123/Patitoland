@@ -43,6 +43,25 @@
   "MARQUEE": {
     "TEXT": "🔥 PROMOCIÓ! Paga 8€ i juga 2 hores de dilluns a dijous 🔥"
   },
+  "FAQ": {
+    "TITLE": "Preguntes Freqüents",
+    "Q1": "Quines edats són adequades per al parc?",
+    "A1": "El nostre parc està dissenyat per a nens d'1 a 12 anys. Els menors de 2 anys han d'estar acompanyats per un adult dins de la zona de joc.",
+    "Q2": "És obligatori l'ús de mitjons antilliscants?",
+    "A2": "Sí, els mitjons antilliscants són obligatoris tant per a nens com per a adults dins de l'àrea de joc. Els pots comprar a recepció per 2€.",
+    "Q3": "Es pot portar menjar o beguda de fora?",
+    "A3": "No es permet portar menjar ni beguda al parc. Disposem de servei de restauració amb varietat d'opcions per a grans i petits.",
+    "Q4": "Com puc reservar una festa d'aniversari?",
+    "A4": "Pots reservar a través del nostre calendari de reserves a la secció d'Aniversaris, o contactar-nos directament per telèfon o WhatsApp al 603 31 55 76.",
+    "Q5": "Què inclou el paquet d'aniversari?",
+    "A5": "Tots els paquets inclouen entrepans (pernil i formatge, Nutella o hotdog), sucs, aigua, mitjons antilliscants, bossa de llaminadures i patates per compartir. El pastís NO està inclòs.",
+    "Q6": "Quin és l'horari del parc?",
+    "A6": "De dilluns a divendres de 17:00 a 21:00. Dissabtes, diumenges i festius d'11:00 a 21:00.",
+    "Q7": "Es pot entrar i sortir lliurement?",
+    "A7": "No, un cop dins del parc no es permet l'entrada i sortida lliure. El temps contractat comença a comptar des del moment de l'entrada.",
+    "Q8": "On esteu ubicats?",
+    "A8": "Som al Carrer de Colom 453, Nau D52, Terrassa. T'esperem!"
+  },
   "BIRTHDAY_PAGE": {
     "TITLE": "Tarifes Aniversaris",
     "INCLUDES": "Tots els paquets inclouen",
@@ -57,7 +76,9 @@
     "WEEKDAY_NOTE": "Entre setmana: temps de joc i sala il·limitats",
     "INCLUDED_ITEMS": "Inclòs en tots els paquets",
     "SANDWICHES": "Entrepans",
+    "SANDWICHES_OPTIONS": "Pernil i formatge, Nutella o Hotdog",
     "JUICE": "Sucs",
+    "JUICE_OPTIONS": "Pinya, poma, préssec o taronja",
     "WATER": "Aigua petita",
     "SOCKS": "Mitjons antilliscants",
     "CANDY": "Bossa de llaminadures",

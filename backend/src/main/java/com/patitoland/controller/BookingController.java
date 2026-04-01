@@ -101,13 +101,9 @@ public class BookingController {
 
         Booking saved = bookingRepository.save(booking);
 
-        // Send emails asynchronously (non-blocking)
-        try {
-            emailService.sendBookingConfirmation(saved);
-            emailService.sendBookingNotification(saved);
-        } catch (Exception e) {
-            // Log but don't fail the booking
-        }
+        // Send emails asynchronously (non-blocking via @Async)
+        emailService.sendBookingConfirmation(saved);
+        emailService.sendBookingNotification(saved);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
                 "id", saved.getId(),

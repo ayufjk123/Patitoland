@@ -6,7 +6,7 @@
       </a>
 
       <div class="nav-right">
-        <div class="custom-lang-selector" (mouseleave)="langMenuOpen = false">
+        <div class="custom-lang-selector">
           <button class="lang-current" (click)="toggleLangMenu()">
             <i class="fas fa-globe"></i>
             <span>{{ (langService.currentLang$ | async) | uppercase }}</span>

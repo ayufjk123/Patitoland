@@ -43,6 +43,25 @@
   "MARQUEE": {
     "TEXT": "🔥 ¡PROMOCIÓN! Paga 8€ y juega 2 horas de lunes a jueves 🔥"
   },
+  "FAQ": {
+    "TITLE": "Preguntas Frecuentes",
+    "Q1": "¿Qué edades son adecuadas para el parque?",
+    "A1": "Nuestro parque está diseñado para niños de 1 a 12 años. Los menores de 2 años deben estar acompañados por un adulto dentro de la zona de juego.",
+    "Q2": "¿Es obligatorio el uso de calcetines antideslizantes?",
+    "A2": "Sí, los calcetines antideslizantes son obligatorios tanto para niños como para adultos dentro del área de juego. Puedes comprarlos en recepción por 2€.",
+    "Q3": "¿Se puede traer comida o bebida de fuera?",
+    "A3": "No se permite traer comida ni bebida al parque. Disponemos de servicio de restauración con variedad de opciones para grandes y pequeños.",
+    "Q4": "¿Cómo puedo reservar una fiesta de cumpleaños?",
+    "A4": "Puedes reservar a través de nuestro calendario de reservas en la sección de Cumpleaños, o contactarnos directamente por teléfono o WhatsApp al 603 31 55 76.",
+    "Q5": "¿Qué incluye el paquete de cumpleaños?",
+    "A5": "Todos los paquetes incluyen bocadillos (jamón y queso, Nutella o hotdog), zumos, agua, calcetines antideslizantes, bolsa de chuches y patatas para compartir. El pastel NO está incluido.",
+    "Q6": "¿Cuál es el horario del parque?",
+    "A6": "De lunes a viernes de 17:00 a 21:00. Sábados, domingos y festivos de 11:00 a 21:00.",
+    "Q7": "¿Se puede entrar y salir libremente?",
+    "A7": "No, una vez dentro del parque no se permite la entrada y salida libre. El tiempo contratado empieza a contar desde el momento de la entrada.",
+    "Q8": "¿Dónde estáis ubicados?",
+    "A8": "Estamos en Carrer de Colom 453, Nave D52, Terrassa. ¡Te esperamos!"
+  },
   "BIRTHDAY_PAGE": {
     "TITLE": "Tarifas Cumpleaños",
     "INCLUDES": "Todos los paquetes incluyen",
@@ -57,7 +76,9 @@
     "WEEKDAY_NOTE": "Entre semana: tiempo de juego y sala ilimitados",
     "INCLUDED_ITEMS": "Incluido en todos los paquetes",
     "SANDWICHES": "Bocadillos",
+    "SANDWICHES_OPTIONS": "Jamón y queso, Nutella o Hotdog",
     "JUICE": "Zumos",
+    "JUICE_OPTIONS": "Piña, manzana, melocotón o naranja",
     "WATER": "Agua pequeña",
     "SOCKS": "Calcetines antideslizantes",
     "CANDY": "Bolsa de chuches",
