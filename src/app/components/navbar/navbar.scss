@@ -24,11 +24,19 @@
   position: relative;
 }
 
-.logo img {
+.logo-img {
   display: block;
+  width: 120px;
+  border-radius: 50%;
   transition: transform 0.3s ease;
   &:hover {
     transform: scale(1.05) rotate(-3deg);
+  }
+}
+
+@media (max-width: 900px) {
+  .logo-img {
+    width: 70px;
   }
 }
 
