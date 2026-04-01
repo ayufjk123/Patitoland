@@ -38,6 +38,24 @@
   .logo-img {
     width: 70px;
   }
+
+  .nav-right {
+    gap: 0.5rem;
+  }
+
+  .lang-current {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.8rem;
+
+    .arrow {
+      display: none;
+    }
+  }
+
+  .hamburger {
+    display: flex !important;
+    min-width: 40px;
+  }
 }
 
 .nav-right {
