@@ -30,6 +30,15 @@ public class EmailService {
         this.mailSender = mailSender;
     }
 
+    public void sendTestEmail() {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(contactEmail);
+        message.setFrom(contactEmail);
+        message.setSubject("PatitoLand - Test Email");
+        message.setText("This is a test email from PatitoLand backend. If you receive this, email is working!");
+        mailSender.send(message);
+    }
+
     public void sendContactEmail(ContactRequest request) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(contactEmail);

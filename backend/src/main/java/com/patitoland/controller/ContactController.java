@@ -24,4 +24,14 @@ public class ContactController {
         emailService.sendContactEmail(request);
         return ResponseEntity.ok(Map.of("status", "sent"));
     }
+
+    @GetMapping("/test-email")
+    public ResponseEntity<Map<String, String>> testEmail() {
+        try {
+            emailService.sendTestEmail();
+            return ResponseEntity.ok(Map.of("status", "Email sent successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", e.getClass().getSimpleName() + ": " + e.getMessage()));
+        }
+    }
 }
