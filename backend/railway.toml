@@ -1,0 +1,8 @@
+[build]
+builder = "dockerfile"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+healthcheckPath = "/api/bookings/availability?month=2026-01"
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 10

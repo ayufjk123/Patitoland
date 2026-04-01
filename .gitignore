@@ -1,0 +1,64 @@
+# Compiled output
+/dist
+/tmp
+/out-tsc
+/bazel-out
+
+# Node
+/node_modules
+npm-debug.log
+yarn-error.log
+
+# Angular
+/.angular/cache
+.sass-cache/
+
+# IDEs and editors
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/mcp.json
+.history/*
+
+# Java / Maven backend
+backend/target/
+backend/data/
+backend/*.iml
+backend/.mvn/wrapper/maven-wrapper.jar
+
+# Logs
+*.log
+error.log
+error.txt
+
+# Environment / Secrets
+.env
+*.env.local
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Claude
+.claude/
+.agent/
+
+# Coverage & tests
+/coverage
+/connect.lock
+/libpeerconnection.log
+testem.log
+/typings
+__screenshots__/
+
+# Old site backup
+/_old_site/

@@ -1,0 +1,186 @@
+.smart-tarifas {
+  padding: 4rem 2rem;
+  background: var(--bg-color);
+}
+
+.tarifas-container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.section-title {
+  text-align: center;
+  font-size: 2.5rem;
+  color: var(--primary-dark);
+  margin-bottom: 2rem;
+}
+
+.tarifas-tabs {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+}
+
+.tab-btn {
+  padding: 0.8rem 2rem;
+  border: none;
+  border-radius: var(--radius-pill);
+  background: var(--border-light);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  font-size: 1.1rem;
+  font-weight: 600;
+
+  &.active {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 8px 25px rgba(247, 148, 29, 0.3);
+    transform: translateY(-2px);
+  }
+
+  &:hover:not(.active) {
+    background: var(--bg-surface);
+    color: var(--primary-dark);
+    box-shadow: var(--shadow-soft);
+  }
+}
+
+.tab-content {
+  animation: fade-up 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.time-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+.time-card {
+  background: var(--bg-surface);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem 2rem;
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s;
+
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-hover);
+  }
+
+  &.weekend {
+    border-top: 4px solid #ffd700;
+  }
+}
+
+.time-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--border-light);
+
+  i {
+    font-size: 1.8rem;
+    color: var(--primary);
+  }
+
+  h3 {
+    color: var(--text-main);
+    font-size: 1.3rem;
+    margin: 0;
+  }
+}
+
+.price-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.price-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.2rem;
+  background: var(--bg-color);
+  border-radius: var(--radius-sm);
+  position: relative;
+  transition: background 0.2s;
+
+  &:hover {
+    background: var(--primary-light);
+  }
+
+  &.popular {
+    background: linear-gradient(135deg, var(--primary-light) 0%, var(--bg-surface) 100%);
+    border: 2px solid #ffd700;
+  }
+}
+
+.price {
+  color: var(--primary-dark);
+  font-weight: 800;
+  font-size: 1.4em;
+}
+
+.badge {
+  background: var(--primary);
+  color: white;
+  padding: 0.3rem 0.8rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.8em;
+  font-weight: bold;
+}
+
+.rules-list {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.rule-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  background: var(--bg-surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.3s;
+
+  &:hover {
+    transform: translateX(5px);
+  }
+
+  i {
+    font-size: 1.5rem;
+    color: var(--primary);
+    margin-top: 2px;
+  }
+
+  p {
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin: 0;
+    font-weight: 500;
+  }
+}
+
+@media (max-width: 768px) {
+  .smart-tarifas {
+    padding: 2rem 1rem;
+  }
+  .tarifas-tabs {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .tab-btn {
+    width: 100%;
+  }
+  .time-grid {
+    grid-template-columns: 1fr;
+  }
+}

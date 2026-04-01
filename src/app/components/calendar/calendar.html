@@ -1,0 +1,275 @@
+<div class="booking-calendar">
+  <h3 class="calendar-title">
+    <i class="fas fa-calendar-alt"></i>
+    {{ 'CALENDAR.TITLE' | translate }}
+  </h3>
+
+  <!-- Month navigation -->
+  <div class="calendar-nav">
+    <button class="nav-btn" [class.disabled]="!canGoPrev" (click)="prevMonth()" [attr.aria-label]="'CALENDAR.PREV_MONTH' | translate">
+      <i class="fas fa-chevron-left"></i>
+    </button>
+    <span class="month-label">{{ monthLabel }}</span>
+    <button class="nav-btn" (click)="nextMonth()" [attr.aria-label]="'CALENDAR.NEXT_MONTH' | translate">
+      <i class="fas fa-chevron-right"></i>
+    </button>
+  </div>
+
+  <!-- Legend -->
+  <div class="calendar-legend">
+    <span class="legend-item">
+      <span class="legend-dot available"></span>
+      {{ 'CALENDAR.AVAILABLE' | translate }}
+    </span>
+    <span class="legend-item">
+      <span class="legend-dot partial"></span>
+      {{ 'CALENDAR.PARTIAL' | translate }}
+    </span>
+    <span class="legend-item">
+      <span class="legend-dot full"></span>
+      {{ 'CALENDAR.FULL' | translate }}
+    </span>
+    <span class="legend-item">
+      <span class="legend-dot closed"></span>
+      {{ 'CALENDAR.CLOSED' | translate }}
+    </span>
+  </div>
+
+  <!-- Weekday headers -->
+  <div class="calendar-grid">
+    @for (key of weekDayKeys; track key) {
+      <div class="weekday-header">{{ key | translate }}</div>
+    }
+
+    <!-- Day cells -->
+    @for (day of calendarDays(); track $index) {
+      @if (day.status === 'empty') {
+        <div class="day-cell empty"></div>
+      } @else {
+        <div
+          class="day-cell"
+          [class.available]="day.status === 'available'"
+          [class.partial]="day.status === 'partial'"
+          [class.full]="day.status === 'full'"
+          [class.closed]="day.status === 'closed'"
+          [class.past]="day.status === 'past'"
+          [class.today]="day.isToday"
+          [class.selected]="isDaySelected(day)"
+          [class.clickable]="day.status !== 'past' && day.status !== 'closed'"
+          (click)="selectDay(day)"
+        >
+          <span class="day-number">{{ day.day }}</span>
+        </div>
+      }
+    }
+  </div>
+
+  @if (loadingMonth()) {
+    <div class="loading-overlay">
+      <i class="fas fa-spinner fa-spin"></i>
+    </div>
+  }
+
+  @if (errorMonth()) {
+    <div class="calendar-notice">
+      <i class="fas fa-info-circle"></i>
+      <p>{{ 'CALENDAR.AVAILABLE' | translate }}</p>
+    </div>
+  }
+
+  <!-- Date detail panel -->
+  @if (selectedDate()) {
+    <div class="date-detail animate-fade-up">
+      <h4 class="detail-title">
+        <i class="fas fa-calendar-day"></i>
+        {{ formattedSelectedDate() }}
+      </h4>
+
+      <!-- Room & Time picker -->
+      @if (availableTimes().length > 0) {
+        <div class="time-picker">
+          <!-- Room selector -->
+          <h5 class="time-picker-title">
+            <i class="fas fa-door-open"></i>
+            {{ 'CALENDAR.SELECT_ROOM' | translate }}
+          </h5>
+          <div class="room-selector">
+            <button
+              class="room-btn"
+              [class.selected]="isRoomSelected('SALA_PRIVADA')"
+              (click)="selectRoom('SALA_PRIVADA')"
+              type="button"
+            >
+              <i class="fas fa-lock"></i>
+              {{ 'CALENDAR.PRIVATE_ROOM' | translate }}
+            </button>
+            <button
+              class="room-btn"
+              [class.selected]="isRoomSelected('ZONA_RESTAURACION')"
+              (click)="selectRoom('ZONA_RESTAURACION')"
+              type="button"
+            >
+              <i class="fas fa-utensils"></i>
+              {{ 'CALENDAR.RESTAURANT_ZONE' | translate }}
+            </button>
+          </div>
+
+          <!-- Time grid (shown after room selection) -->
+          @if (selectedRoom()) {
+            <h5 class="time-picker-title time-subtitle">
+              <i class="fas fa-clock"></i>
+              {{ 'CALENDAR.SELECT_TIME' | translate }}
+            </h5>
+            
+            @if (morningTimes().length > 0) {
+              <div class="time-group">
+                <h6 class="time-group-title">{{ 'CALENDAR.MORNING' | translate }}</h6>
+                <div class="time-grid">
+                  @for (time of morningTimes(); track time) {
+                    <button
+                      class="time-slot"
+                      [class.selected]="isTimeSelected(time)"
+                      [class.disabled]="isTimeBooked(time)"
+                      [disabled]="isTimeBooked(time)"
+                      (click)="selectTime(time)"
+                      type="button"
+                    >
+                      {{ time }}
+                    </button>
+                  }
+                </div>
+              </div>
+            }
+
+            @if (afternoonTimes().length > 0) {
+              <div class="time-group">
+                <h6 class="time-group-title">{{ 'CALENDAR.AFTERNOON' | translate }}</h6>
+                <div class="time-grid">
+                  @for (time of afternoonTimes(); track time) {
+                    <button
+                      class="time-slot"
+                      [class.selected]="isTimeSelected(time)"
+                      [class.disabled]="isTimeBooked(time)"
+                      [disabled]="isTimeBooked(time)"
+                      (click)="selectTime(time)"
+                      type="button"
+                    >
+                      {{ time }}
+                    </button>
+                  }
+                </div>
+              </div>
+            }
+          }
+        </div>
+      }        <!-- Booking form (shown when date + room + time are selected) -->
+        @if (showForm()) {
+          <div class="booking-form">
+            <h5 class="booking-form-title">
+              <i class="fas fa-user-edit"></i>
+              {{ 'CALENDAR.YOUR_DETAILS' | translate }}
+            </h5>
+
+            <div class="form-group">
+              <label for="parentName">{{ 'CALENDAR.PARENT_NAME' | translate }} *</label>
+              <input
+                id="parentName"
+                type="text"
+                class="form-input"
+                [ngModel]="parentName()"
+                (ngModelChange)="parentName.set($event)"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="email">{{ 'CALENDAR.EMAIL' | translate }} *</label>
+              <input
+                id="email"
+                type="email"
+                class="form-input"
+                [ngModel]="email()"
+                (ngModelChange)="email.set($event)"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="phone">{{ 'CALENDAR.PHONE' | translate }} *</label>
+              <input
+                id="phone"
+                type="tel"
+                class="form-input"
+                [ngModel]="phone()"
+                (ngModelChange)="phone.set($event)"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="childrenNames">{{ 'CALENDAR.CHILDREN_NAMES' | translate }} *</label>
+              <input
+                id="childrenNames"
+                type="text"
+                class="form-input"
+                [ngModel]="childrenNames()"
+                (ngModelChange)="childrenNames.set($event)"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="childrenCount">{{ 'CALENDAR.CHILDREN_COUNT' | translate }} *</label>
+              <input
+                id="childrenCount"
+                type="text"
+                class="form-input"
+                [ngModel]="childrenCount()"
+                (ngModelChange)="childrenCount.set($event)"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="notes">{{ 'CALENDAR.NOTES' | translate }}</label>
+              <textarea
+                id="notes"
+                class="form-input"
+                rows="3"
+                [ngModel]="notes()"
+                (ngModelChange)="notes.set($event)"
+              ></textarea>
+            </div>
+
+            @if (submitError()) {
+              <div class="form-message error">
+                <i class="fas fa-exclamation-circle"></i>
+                {{ submitError() }}
+              </div>
+            }
+
+            @if (submitSuccess()) {
+              <div class="form-message success">
+                <i class="fas fa-check-circle"></i>
+                {{ 'CALENDAR.SUBMIT_SUCCESS' | translate }}
+              </div>
+            }
+
+            <button
+              class="book-now-btn"
+              [disabled]="submitting() || !parentName() || !email() || !phone() || !childrenNames() || !childrenCount()"
+              (click)="submitBooking()"
+              type="button"
+            >
+              @if (submitting()) {
+                <i class="fas fa-spinner fa-spin"></i>
+              } @else {
+                <i class="fas fa-calendar-check"></i>
+              }
+              {{ 'CALENDAR.BOOK_NOW' | translate }}
+            </button>
+          </div>
+        }
+    </div>
+  }
+</div>

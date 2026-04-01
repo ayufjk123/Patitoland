@@ -1,0 +1,25 @@
+.live-bar {
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  background-color: #F7941D;
+  padding: 12px 0;
+}
+
+.marquee-track {
+  display: inline-block;
+  animation: marquee 20s linear infinite;
+  padding-left: 100%;
+}
+
+.marquee-text {
+  color: white;
+  font-weight: bold;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}

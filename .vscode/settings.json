@@ -1,0 +1,4 @@
+{
+    "java.codeGeneration.generateComments": true,
+    "java.configuration.updateBuildConfiguration": "automatic"
+}

@@ -1,0 +1,95 @@
+<section class="contact-page animate-fade-up">
+  <h2 class="page-title animate-bounce-in">{{ 'CONTACT.TITLE' | translate }}</h2>
+  <p class="page-subtitle animate-fade-up delay-200">{{ 'CONTACT.SUBTITLE' | translate }}</p>
+
+  <div class="contact-grid">
+    <!-- Contact Info -->
+    <div class="contact-info-section animate-bounce-in delay-300">
+      <div class="info-item">
+        <i class="fas fa-map-marker-alt"></i>
+        <div>
+          <h4>{{ 'CONTACT.ADDRESS' | translate }}</h4>
+          <p>Carrer de Colom 453, Nave D52, Terrassa</p>
+        </div>
+      </div>
+
+      <div class="info-item">
+        <i class="fas fa-phone"></i>
+        <div>
+          <h4>{{ 'CONTACT.PHONE' | translate }}</h4>
+          <p><a href="tel:603315576">603 31 55 76</a></p>
+        </div>
+      </div>
+
+      <div class="info-item">
+        <i class="fas fa-envelope"></i>
+        <div>
+          <h4>Email</h4>
+          <p><a href="mailto:patitoland.parcinfantil@gmail.com">patitoland.parcinfantil&#64;gmail.com</a></p>
+        </div>
+      </div>
+
+      <div class="info-item">
+        <i class="fas fa-clock"></i>
+        <div>
+          <h4>{{ 'CONTACT.SCHEDULE' | translate }}</h4>
+          <p>{{ 'FOOTER.HOURS_WEEKDAY' | translate }}</p>
+          <p>{{ 'FOOTER.HOURS_WEEKEND' | translate }}</p>
+        </div>
+      </div>
+
+      <a href="https://wa.me/34603315576" target="_blank" rel="noopener" class="whatsapp-btn">
+        <i class="fab fa-whatsapp"></i>
+        {{ 'CONTACT.WHATSAPP' | translate }}
+      </a>
+    </div>
+
+    <!-- Contact Form -->
+    <div class="contact-form-section animate-bounce-in delay-400">
+      <form (ngSubmit)="onSubmit()" #contactForm="ngForm">
+        <div class="form-group">
+          <label for="name">{{ 'CONTACT.NAME' | translate }}</label>
+          <input type="text" id="name" name="name" [(ngModel)]="formData.name" required>
+        </div>
+
+        <div class="form-group">
+          <label for="email">{{ 'CONTACT.EMAIL' | translate }}</label>
+          <input type="email" id="email" name="email" [(ngModel)]="formData.email" required>
+        </div>
+
+        <div class="form-group">
+          <label for="message">{{ 'CONTACT.MESSAGE' | translate }}</label>
+          <textarea id="message" name="message" rows="5" [(ngModel)]="formData.message" required></textarea>
+        </div>
+
+        <button type="submit" class="submit-btn" [disabled]="!contactForm.valid">
+          <i class="fas fa-paper-plane"></i>
+          {{ 'CONTACT.SEND' | translate }}
+        </button>
+      </form>
+
+      @if (submitted) {
+        <div class="success-msg">
+          <i class="fas fa-check-circle"></i>
+          <p>Missatge enviat correctament!</p>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Map -->
+  <div class="map-section animate-fade-up delay-500">
+    <h3 class="animate-bounce-in delay-600">{{ 'CONTACT.FIND_US' | translate }}</h3>
+    <div class="map-container">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2988.5!2d2.0089!3d41.5631!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12a4938f3b3b3b3b%3A0x1234567890abcdef!2sCarrer+de+Colom+453%2C+Terrassa!5e0!3m2!1ses!2ses!4v1234567890"
+        width="100%"
+        height="350"
+        style="border:0; border-radius: 15px;"
+        allowfullscreen=""
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
+    </div>
+  </div>
+</section>

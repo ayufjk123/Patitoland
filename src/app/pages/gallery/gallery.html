@@ -1,0 +1,19 @@
+<section class="gallery-page animate-fade-up">
+  <h2 class="page-title animate-bounce-in">{{ 'GALLERY.TITLE' | translate }}</h2>
+  <p class="page-subtitle animate-fade-up delay-200">{{ 'GALLERY.SUBTITLE' | translate }}</p>
+
+  <div class="gallery-grid">
+    @for (img of images; track img.src; let i = $index) {
+      <div class="gallery-item animate-bounce-in" [style.animationDelay]="(i * 50) + 'ms'" (click)="openLightbox(img.src)">
+        <img [src]="img.src" [alt]="img.alt" loading="lazy">
+      </div>
+    }
+  </div>
+</section>
+
+@if (selectedImage) {
+  <div class="lightbox animate-fade-up" (click)="closeLightbox()">
+    <button class="lightbox-close" aria-label="Close">&times;</button>
+    <img [src]="selectedImage" alt="PatitoLand Parc" (click)="$event.stopPropagation()">
+  </div>
+}

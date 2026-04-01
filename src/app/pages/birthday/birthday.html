@@ -1,0 +1,87 @@
+<section class="birthday-page animate-fade-up">
+  <h2 class="page-title animate-bounce-in">{{ 'BIRTHDAY_PAGE.TITLE' | translate }}</h2>
+
+  <!-- Packages -->
+  <div class="packages">
+    <div class="package-card basic animate-bounce-in delay-200">
+      <div class="package-header">
+        <h3>{{ 'BIRTHDAY_PAGE.BASIC' | translate }}</h3>
+      </div>
+      <ul>
+        <li><i class="fas fa-play"></i> {{ 'BIRTHDAY_PAGE.BASIC_PLAY' | translate }}</li>
+        <li><i class="fas fa-door-open"></i> {{ 'BIRTHDAY_PAGE.BASIC_ROOM' | translate }}</li>
+      </ul>
+      <div class="price-row">
+        <div class="price-block">
+          <span class="period">{{ 'BIRTHDAY_PAGE.WEEKDAY' | translate }}</span>
+          <span class="price">17&euro;</span>
+        </div>
+        <div class="price-block">
+          <span class="period">{{ 'BIRTHDAY_PAGE.WEEKEND' | translate }}</span>
+          <span class="price">20&euro;</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="package-card premium animate-bounce-in delay-400">
+      <div class="package-header">
+        <span class="premium-badge">PREMIUM</span>
+        <h3>{{ 'BIRTHDAY_PAGE.PREMIUM' | translate }}</h3>
+      </div>
+      <ul>
+        <li><i class="fas fa-play"></i> {{ 'BIRTHDAY_PAGE.PREMIUM_PLAY' | translate }}</li>
+        <li><i class="fas fa-door-open"></i> {{ 'BIRTHDAY_PAGE.PREMIUM_ROOM' | translate }}</li>
+      </ul>
+      <div class="price-row">
+        <div class="price-block">
+          <span class="period">{{ 'BIRTHDAY_PAGE.WEEKDAY' | translate }}</span>
+          <span class="price">20&euro;</span>
+        </div>
+        <div class="price-block">
+          <span class="period">{{ 'BIRTHDAY_PAGE.WEEKEND' | translate }}</span>
+          <span class="price">23&euro;</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Weekday unlimited note -->
+  <div class="unlimited-note animate-fade-up delay-500">
+    <i class="fas fa-infinity"></i>
+    <p>{{ 'BIRTHDAY_PAGE.WEEKDAY_NOTE' | translate }}</p>
+  </div>
+
+  <!-- Included items -->
+  <div class="included-section animate-fade-up delay-600">
+    <h3>{{ 'BIRTHDAY_PAGE.INCLUDED_ITEMS' | translate }}</h3>
+    <div class="included-grid">
+      <div class="included-item"><i class="fas fa-bread-slice"></i> {{ 'BIRTHDAY_PAGE.SANDWICHES' | translate }}</div>
+      <div class="included-item"><i class="fas fa-glass-water"></i> {{ 'BIRTHDAY_PAGE.JUICE' | translate }}</div>
+      <div class="included-item"><i class="fas fa-bottle-water"></i> {{ 'BIRTHDAY_PAGE.WATER' | translate }}</div>
+      <div class="included-item"><i class="fas fa-socks"></i> {{ 'BIRTHDAY_PAGE.SOCKS' | translate }}</div>
+      <div class="included-item"><i class="fas fa-candy-cane"></i> {{ 'BIRTHDAY_PAGE.CANDY' | translate }}</div>
+      <div class="included-item"><i class="fas fa-bowl-food"></i> {{ 'BIRTHDAY_PAGE.CHIPS' | translate }}</div>
+    </div>
+    <div class="cake-note">
+      <i class="fas fa-info-circle"></i>
+      <p>{{ 'BIRTHDAY_PAGE.CAKE_NOTE' | translate }}</p>
+    </div>
+  </div>
+
+  <!-- Important notes -->
+  <div class="notes-section">
+    <div class="note-item animate-fade-up delay-700">
+      <i class="fas fa-users"></i>
+      <p>{{ 'BIRTHDAY_PAGE.PRIVATE_ROOM_NOTE' | translate }}</p>
+    </div>
+    <div class="note-item animate-fade-up delay-800">
+      <i class="fas fa-socks"></i>
+      <p>{{ 'BIRTHDAY_PAGE.SAFETY_NOTE' | translate }}</p>
+    </div>
+  </div>
+
+  <!-- Booking Calendar -->
+  <div class="calendar-section animate-fade-up delay-900">
+    <app-calendar></app-calendar>
+  </div>
+</section>

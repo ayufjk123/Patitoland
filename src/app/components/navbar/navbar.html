@@ -1,0 +1,42 @@
+<header class="sticky-header">
+  <nav class="main-nav">
+    <div class="nav-container">
+      <a routerLink="/" class="logo" (click)="closeMenu()">
+        <img src="img/logo_new.jpg" alt="PatitoLand Parc Logo" width="140" style="border-radius: 50%;">
+      </a>
+
+      <div class="nav-right">
+        <div class="custom-lang-selector" (mouseleave)="langMenuOpen = false">
+          <button class="lang-current" (click)="toggleLangMenu()">
+            <i class="fas fa-globe"></i>
+            <span>{{ (langService.currentLang$ | async) | uppercase }}</span>
+            <i class="fas fa-chevron-down arrow" [class.rotated]="langMenuOpen"></i>
+          </button>
+          
+          @if (langMenuOpen) {
+            <div class="lang-dropdown">
+               <button (click)="selectLanguage('ca')" [class.active]="(langService.currentLang$ | async) === 'ca'">Català</button>
+               <button (click)="selectLanguage('es')" [class.active]="(langService.currentLang$ | async) === 'es'">Español</button>
+               <button (click)="selectLanguage('en')" [class.active]="(langService.currentLang$ | async) === 'en'">English</button>
+            </div>
+          }
+        </div>
+
+        <button class="hamburger" [class.active]="menuOpen" (click)="toggleMenu()" aria-label="Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+
+      <ul class="nav-menu" [class.active]="menuOpen">
+        <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-link" (click)="closeMenu()">{{ 'NAV.HOME' | translate }}</a></li>
+        <li><a routerLink="/galeria" routerLinkActive="active" class="nav-link" (click)="closeMenu()">{{ 'NAV.GALLERY' | translate }}</a></li>
+        <li><a routerLink="/tarifas" routerLinkActive="active" class="nav-link nav-cta" (click)="closeMenu()">{{ 'NAV.PRICING' | translate }}</a></li>
+        <li><a routerLink="/cumpleanos" routerLinkActive="active" class="nav-link" (click)="closeMenu()">{{ 'NAV.BIRTHDAY' | translate }}</a></li>
+        <li><a routerLink="/normas" routerLinkActive="active" class="nav-link" (click)="closeMenu()">{{ 'NAV.RULES' | translate }}</a></li>
+        <li><a routerLink="/contacto" routerLinkActive="active" class="nav-link" (click)="closeMenu()">{{ 'NAV.CONTACT' | translate }}</a></li>
+      </ul>
+    </div>
+  </nav>
+</header>

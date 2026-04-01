@@ -1,0 +1,44 @@
+.pricing-info {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: var(--bg-surface);
+
+  .info-card {
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem 3rem;
+    background: var(--bg-color);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-soft);
+    transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+
+    &:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: var(--shadow-hover);
+    }
+
+    i {
+      color: var(--primary);
+      font-size: 1.5rem;
+    }
+
+    p {
+      color: var(--text-muted);
+      margin: 0;
+      font-size: 1.1rem;
+    }
+
+    a {
+      color: var(--primary-dark);
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 1.2rem;
+      letter-spacing: 1px;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}

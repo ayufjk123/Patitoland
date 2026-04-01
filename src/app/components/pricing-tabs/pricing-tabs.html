@@ -1,0 +1,116 @@
+<section class="smart-tarifas">
+  <div class="tarifas-container">
+    <h2 class="section-title animate-bounce-in">{{ 'PRICING.TITLE' | translate }}</h2>
+
+    <div class="tarifas-tabs animate-fade-up delay-200">
+      <button class="tab-btn" [class.active]="activeTab === 'general'" (click)="setTab('general')">
+        {{ 'PRICING.TAB_GENERAL' | translate }}
+      </button>
+      <button class="tab-btn" [class.active]="activeTab === 'under2'" (click)="setTab('under2')">
+        {{ 'PRICING.TAB_UNDER2' | translate }}
+      </button>
+      <button class="tab-btn" [class.active]="activeTab === 'rules'" (click)="setTab('rules')">
+        {{ 'PRICING.TAB_RULES' | translate }}
+      </button>
+    </div>
+
+    <!-- General Pricing -->
+    @if (activeTab === 'general') {
+      <div class="tab-content">
+        <div class="time-grid">
+          <div class="time-card animate-bounce-in delay-300">
+            <div class="time-header">
+              <i class="fas fa-clock"></i>
+              <h3>{{ 'PRICING.WEEKDAY' | translate }}</h3>
+            </div>
+            <div class="price-list">
+              <div class="price-item">
+                <span>{{ 'PRICING.HOUR_1' | translate }}</span>
+                <span class="price">8&euro;</span>
+              </div>
+              <div class="price-item">
+                <span>{{ 'PRICING.HOUR_2' | translate }}</span>
+                <span class="price">13&euro;</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="time-card weekend animate-bounce-in delay-400">
+            <div class="time-header">
+              <i class="fas fa-sun"></i>
+              <h3>{{ 'PRICING.WEEKEND' | translate }}</h3>
+            </div>
+            <div class="price-list">
+              <div class="price-item popular">
+                <span>{{ 'PRICING.HOUR_1' | translate }}</span>
+                <span class="price">10&euro;</span>
+                <span class="badge">{{ 'PRICING.POPULAR' | translate }}</span>
+              </div>
+              <div class="price-item">
+                <span>{{ 'PRICING.HOUR_2' | translate }}</span>
+                <span class="price">17&euro;</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Under 2 Pricing -->
+    @if (activeTab === 'under2') {
+      <div class="tab-content">
+        <div class="time-grid">
+          <div class="time-card animate-bounce-in delay-300">
+            <div class="time-header">
+              <i class="fas fa-baby"></i>
+              <h3>{{ 'PRICING.WEEKDAY' | translate }}</h3>
+            </div>
+            <div class="price-list">
+              <div class="price-item">
+                <span>{{ 'PRICING.HOUR_1' | translate }}</span>
+                <span class="price">4&euro;</span>
+              </div>
+              <div class="price-item">
+                <span>{{ 'PRICING.HOUR_2' | translate }}</span>
+                <span class="price">6,50&euro;</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="time-card weekend animate-bounce-in delay-400">
+            <div class="time-header">
+              <i class="fas fa-baby"></i>
+              <h3>{{ 'PRICING.WEEKEND' | translate }}</h3>
+            </div>
+            <div class="price-list">
+              <div class="price-item">
+                <span>{{ 'PRICING.HOUR_1' | translate }}</span>
+                <span class="price">5&euro;</span>
+              </div>
+              <div class="price-item">
+                <span>{{ 'PRICING.HOUR_2' | translate }}</span>
+                <span class="price">8,50&euro;</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Rules -->
+    @if (activeTab === 'rules') {
+      <div class="tab-content">
+        <div class="rules-list">
+          <div class="rule-item animate-bounce-in delay-300">
+            <i class="fas fa-exclamation-triangle"></i>
+            <p>{{ 'PRICING.RULE_EXTRA_TIME' | translate }}</p>
+          </div>
+          <div class="rule-item animate-bounce-in delay-400">
+            <i class="fas fa-socks"></i>
+            <p>{{ 'PRICING.RULE_SOCKS' | translate }}</p>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</section>
