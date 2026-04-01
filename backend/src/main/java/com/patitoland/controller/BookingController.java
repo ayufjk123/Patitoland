@@ -62,6 +62,15 @@ public class BookingController {
         this.emailService = emailService;
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteBooking(@PathVariable Long id) {
+        if (!bookingRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        bookingRepository.deleteById(id);
+        return ResponseEntity.ok(Map.of("message", "Booking deleted"));
+    }
+
     @PostMapping
     public ResponseEntity<?> createBooking(@Valid @RequestBody BookingRequest request) {
         String room = request.getRoomPreference();
