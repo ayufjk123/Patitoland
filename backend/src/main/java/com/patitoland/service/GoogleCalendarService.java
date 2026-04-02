@@ -8,6 +8,7 @@ import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
 import com.google.auth.http.HttpCredentialsAdapter;
 import com.google.auth.oauth2.GoogleCredentials;
+import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.patitoland.model.Booking;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
@@ -30,11 +31,17 @@ public class GoogleCalendarService {
     private static final String TIMEZONE = "Europe/Madrid";
     private static final int EVENT_DURATION_HOURS = 3;
 
-    @Value("${google.calendar.id:}")
-    private String calendarId;
+    @Value("${google.calendar.sala-privada:}")
+    private String calendarSalaPrivada;
+
+    @Value("${google.calendar.zona-restauracion:}")
+    private String calendarZonaRestauracion;
 
     @Value("${google.credentials.json:}")
     private String credentialsJson;
+
+    @Value("${google.impersonate.email:}")
+    private String impersonateEmail;
 
     private Calendar calendarClient;
 
@@ -45,9 +52,19 @@ public class GoogleCalendarService {
             return;
         }
         try {
-            GoogleCredentials credentials = GoogleCredentials
-                    .fromStream(new ByteArrayInputStream(credentialsJson.getBytes(StandardCharsets.UTF_8)))
-                    .createScoped(Collections.singleton(CalendarScopes.CALENDAR_EVENTS));
+            ServiceAccountCredentials saCredentials = ServiceAccountCredentials
+                    .fromStream(new ByteArrayInputStream(credentialsJson.getBytes(StandardCharsets.UTF_8)));
+
+            GoogleCredentials credentials;
+            if (impersonateEmail != null && !impersonateEmail.isBlank()) {
+                credentials = saCredentials
+                        .createDelegated(impersonateEmail)
+                        .createScoped(Collections.singleton(CalendarScopes.CALENDAR_EVENTS));
+                log.info("Using domain-wide delegation as: {}", impersonateEmail);
+            } else {
+                credentials = saCredentials
+                        .createScoped(Collections.singleton(CalendarScopes.CALENDAR_EVENTS));
+            }
 
             calendarClient = new Calendar.Builder(
                     GoogleNetHttpTransport.newTrustedTransport(),
@@ -56,7 +73,8 @@ public class GoogleCalendarService {
                     .setApplicationName("PatitoLand")
                     .build();
 
-            log.info("Google Calendar client initialized for calendar: {}", calendarId);
+            log.info("Google Calendar client initialized - Sala Privada: {}, Zona Restauracion: {}",
+                    calendarSalaPrivada, calendarZonaRestauracion);
         } catch (Exception e) {
             log.error("Failed to initialize Google Calendar client: {}", e.getMessage());
         }
@@ -72,8 +90,16 @@ public class GoogleCalendarService {
             String roomLabel = "SALA_PRIVADA".equals(booking.getRoomPreference())
                     ? "Sala Privada" : "Zona Restauracion";
 
+            String targetCalendar = "SALA_PRIVADA".equals(booking.getRoomPreference())
+                    ? calendarSalaPrivada : calendarZonaRestauracion;
+
+            if (targetCalendar == null || targetCalendar.isBlank()) {
+                log.warn("No calendar ID configured for room: {}", booking.getRoomPreference());
+                return;
+            }
+
             Event event = new Event()
-                    .setSummary("PatitoLand - " + booking.getParentName() + " - " + roomLabel)
+                    .setSummary(booking.getParentName() + " - " + roomLabel)
                     .setLocation("Carrer de Colom 453, Nave D52, Terrassa")
                     .setDescription(buildDescription(booking, roomLabel));
 
@@ -84,8 +110,8 @@ public class GoogleCalendarService {
             event.setStart(toEventDateTime(startZoned));
             event.setEnd(toEventDateTime(endZoned));
 
-            calendarClient.events().insert(calendarId, event).execute();
-            log.info("Calendar event created for booking: {}", booking.getId());
+            calendarClient.events().insert(targetCalendar, event).execute();
+            log.info("Calendar event created for booking {} in calendar: {}", booking.getId(), targetCalendar);
         } catch (Exception e) {
             log.error("Failed to create calendar event for booking {}: {}",
                     booking.getId(), e.getMessage());
