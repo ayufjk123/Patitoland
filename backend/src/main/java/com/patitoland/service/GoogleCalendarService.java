@@ -29,7 +29,7 @@ public class GoogleCalendarService {
 
     private static final Logger log = LoggerFactory.getLogger(GoogleCalendarService.class);
     private static final String TIMEZONE = "Europe/Madrid";
-    private static final int EVENT_DURATION_HOURS = 3;
+    private static final int EVENT_DURATION_HOURS = 1;
 
     @Value("${google.calendar.sala-privada:}")
     private String calendarSalaPrivada;
@@ -99,7 +99,7 @@ public class GoogleCalendarService {
             }
 
             Event event = new Event()
-                    .setSummary(booking.getParentName() + " - " + roomLabel)
+                    .setSummary("Cumple " + booking.getParentName() + " " + booking.getChildrenCount() + " niños")
                     .setLocation("Carrer de Colom 453, Nave D52, Terrassa")
                     .setDescription(buildDescription(booking, roomLabel));
 
