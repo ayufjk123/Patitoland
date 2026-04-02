@@ -118,6 +118,44 @@ public class GoogleCalendarService {
         }
     }
 
+    public String testCalendar() {
+        if (calendarClient == null) {
+            return "Calendar client not initialized. Credentials JSON present: " +
+                   (credentialsJson != null && !credentialsJson.isBlank()) +
+                   ", Impersonate: " + impersonateEmail +
+                   ", Sala Privada ID: " + calendarSalaPrivada +
+                   ", Zona Rest ID: " + calendarZonaRestauracion;
+        }
+        StringBuilder sb = new StringBuilder();
+        try {
+            Event testEvent = new Event()
+                    .setSummary("TEST - borrar")
+                    .setDescription("Test event");
+            ZonedDateTime now = ZonedDateTime.now(ZoneId.of(TIMEZONE)).plusDays(30);
+            testEvent.setStart(toEventDateTime(now));
+            testEvent.setEnd(toEventDateTime(now.plusHours(1)));
+
+            calendarClient.events().insert(calendarSalaPrivada, testEvent).execute();
+            sb.append("Sala Privada: OK. ");
+        } catch (Exception e) {
+            sb.append("Sala Privada ERROR: ").append(e.getMessage()).append(". ");
+        }
+        try {
+            Event testEvent = new Event()
+                    .setSummary("TEST - borrar")
+                    .setDescription("Test event");
+            ZonedDateTime now = ZonedDateTime.now(ZoneId.of(TIMEZONE)).plusDays(31);
+            testEvent.setStart(toEventDateTime(now));
+            testEvent.setEnd(toEventDateTime(now.plusHours(1)));
+
+            calendarClient.events().insert(calendarZonaRestauracion, testEvent).execute();
+            sb.append("Zona Restauracion: OK.");
+        } catch (Exception e) {
+            sb.append("Zona Restauracion ERROR: ").append(e.getMessage());
+        }
+        return sb.toString();
+    }
+
     private EventDateTime toEventDateTime(ZonedDateTime zdt) {
         return new EventDateTime()
                 .setDateTime(new com.google.api.client.util.DateTime(
