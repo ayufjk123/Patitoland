@@ -4,6 +4,7 @@ import com.patitoland.model.Booking;
 import com.patitoland.model.BookingRequest;
 import com.patitoland.repository.BookingRepository;
 import com.patitoland.service.EmailService;
+import com.patitoland.service.GoogleCalendarService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ public class BookingController {
 
     private final BookingRepository bookingRepository;
     private final EmailService emailService;
+    private final GoogleCalendarService googleCalendarService;
 
     private static final int BLOCK_HOURS = 3;
     private static final int ZONA_MAX_CONCURRENT = 2;
@@ -57,9 +59,11 @@ public class BookingController {
             LocalDate.of(2026, 12, 26)
     );
 
-    public BookingController(BookingRepository bookingRepository, EmailService emailService) {
+    public BookingController(BookingRepository bookingRepository, EmailService emailService,
+                             GoogleCalendarService googleCalendarService) {
         this.bookingRepository = bookingRepository;
         this.emailService = emailService;
+        this.googleCalendarService = googleCalendarService;
     }
 
     @DeleteMapping("/{id}")
@@ -110,9 +114,10 @@ public class BookingController {
 
         Booking saved = bookingRepository.save(booking);
 
-        // Send emails asynchronously (non-blocking via @Async)
+        // Send emails and create calendar event asynchronously (non-blocking via @Async)
         emailService.sendBookingConfirmation(saved);
         emailService.sendBookingNotification(saved);
+        googleCalendarService.createBookingEvent(saved);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
                 "id", saved.getId(),
