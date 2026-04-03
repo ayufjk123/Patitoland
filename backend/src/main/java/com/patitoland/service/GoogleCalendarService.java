@@ -99,7 +99,7 @@ public class GoogleCalendarService {
             }
 
             Event event = new Event()
-                    .setSummary("Cumple " + booking.getParentName() + " " + booking.getChildrenCount() + " niños")
+                    .setSummary("Cumple " + booking.getParentName() + " " + booking.getChildrenCount() + " niños " + booking.getTariff())
                     .setLocation("Carrer de Colom 453, Nave D52, Terrassa")
                     .setDescription(buildDescription(booking, roomLabel));
 
