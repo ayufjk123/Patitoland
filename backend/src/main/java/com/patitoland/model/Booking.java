@@ -29,8 +29,34 @@ public class Booking {
 
     private String tariff;
 
+    /** Origin of the booking: "WEB" (online form) or "SHEET" (Google Sheet sync). */
+    private String source;
+
     @Column(columnDefinition = "TEXT")
     private String notes;
+
+    /** Deposit collected via POS, in cents. */
+    private Integer depositAmountCents;
+
+    /** PENDIENTE / COBRADO / DEVUELTO. */
+    private String depositStatus = "PENDIENTE";
+
+    /** Final payment collected via POS, in cents. */
+    private Integer paidAmountCents;
+
+    /** PENDIENTE / PAGADO. */
+    private String paymentStatus = "PENDIENTE";
+
+    private String posDepositOrderId;
+
+    private String posPaymentOrderId;
+
+    private LocalDateTime depositPaidAt;
+
+    private LocalDateTime paidAt;
+
+    /** Booking lifecycle: PENDIENTE / CONFIRMADA / COMPLETADA / CANCELADA. */
+    private String status = "PENDIENTE";
 
     public Booking() {}
 
@@ -64,6 +90,36 @@ public class Booking {
     public String getTariff() { return tariff; }
     public void setTariff(String tariff) { this.tariff = tariff; }
 
+    public String getSource() { return source; }
+    public void setSource(String source) { this.source = source; }
+
     public String getNotes() { return notes; }
     public void setNotes(String notes) { this.notes = notes; }
+
+    public Integer getDepositAmountCents() { return depositAmountCents; }
+    public void setDepositAmountCents(Integer depositAmountCents) { this.depositAmountCents = depositAmountCents; }
+
+    public String getDepositStatus() { return depositStatus; }
+    public void setDepositStatus(String depositStatus) { this.depositStatus = depositStatus; }
+
+    public Integer getPaidAmountCents() { return paidAmountCents; }
+    public void setPaidAmountCents(Integer paidAmountCents) { this.paidAmountCents = paidAmountCents; }
+
+    public String getPaymentStatus() { return paymentStatus; }
+    public void setPaymentStatus(String paymentStatus) { this.paymentStatus = paymentStatus; }
+
+    public String getPosDepositOrderId() { return posDepositOrderId; }
+    public void setPosDepositOrderId(String posDepositOrderId) { this.posDepositOrderId = posDepositOrderId; }
+
+    public String getPosPaymentOrderId() { return posPaymentOrderId; }
+    public void setPosPaymentOrderId(String posPaymentOrderId) { this.posPaymentOrderId = posPaymentOrderId; }
+
+    public LocalDateTime getDepositPaidAt() { return depositPaidAt; }
+    public void setDepositPaidAt(LocalDateTime depositPaidAt) { this.depositPaidAt = depositPaidAt; }
+
+    public LocalDateTime getPaidAt() { return paidAt; }
+    public void setPaidAt(LocalDateTime paidAt) { this.paidAt = paidAt; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 }
