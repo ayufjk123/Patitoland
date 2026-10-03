@@ -1,0 +1,54 @@
+# Set CADDY_SITE_ADDRESS=:80 while testing by IP. At cutover, set it to
+# "patitoland-terrassa.es, www.patitoland-terrassa.es" for automatic HTTPS.
+{$CADDY_SITE_ADDRESS} {
+	encode zstd gzip
+
+	@inventoryRoot path /inventario
+	redir @inventoryRoot /inventario/ 308
+	handle_path /inventario/* {
+		reverse_proxy stockfacil:3000
+	}
+
+	handle /api/* {
+		reverse_proxy backend:8080 {
+			header_up X-Real-IP {remote_host}
+			header_up X-Forwarded-Proto {scheme}
+		}
+	}
+
+	handle {
+		root * /srv
+		try_files {path} /index.html
+		file_server
+	}
+
+	header {
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		-Server
+	}
+
+	@indexHtml {
+		path /index.html / /galeria /tarifas /cumpleanos /promociones /normas /contacto /cupones
+	}
+	header @indexHtml Cache-Control "no-cache, no-store, must-revalidate"
+
+	@translations path /i18n/*.json
+	header @translations Cache-Control "no-cache, no-store, must-revalidate"
+
+	@assets {
+		path *.js *.css *.woff *.woff2 *.png *.jpg *.jpeg *.gif *.svg *.ico *.webp
+	}
+	header @assets Cache-Control "public, max-age=31536000, immutable"
+
+	log {
+		output stdout
+		format filter {
+			request>headers>X-Coupon-Token delete
+			wrap console
+		}
+		level INFO
+	}
+}

@@ -6,6 +6,7 @@ import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
+import com.google.api.services.calendar.model.Events;
 import com.google.auth.http.HttpCredentialsAdapter;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.auth.oauth2.ServiceAccountCredentials;
@@ -19,17 +20,24 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 @Service
 public class GoogleCalendarService {
 
     private static final Logger log = LoggerFactory.getLogger(GoogleCalendarService.class);
     private static final String TIMEZONE = "Europe/Madrid";
-    private static final int EVENT_DURATION_HOURS = 1;
+    private static final int EVENT_DURATION_HOURS = 2;
 
     @Value("${google.calendar.sala-privada:}")
     private String calendarSalaPrivada;
@@ -86,36 +94,48 @@ public class GoogleCalendarService {
             log.warn("Google Calendar not configured, skipping event creation");
             return;
         }
-        try {
-            String roomLabel = "SALA_PRIVADA".equals(booking.getRoomPreference())
-                    ? "Sala Privada" : "Zona Restauracion";
-
-            String targetCalendar = "SALA_PRIVADA".equals(booking.getRoomPreference())
-                    ? calendarSalaPrivada : calendarZonaRestauracion;
-
-            if (targetCalendar == null || targetCalendar.isBlank()) {
-                log.warn("No calendar ID configured for room: {}", booking.getRoomPreference());
-                return;
-            }
-
-            Event event = new Event()
-                    .setSummary("Cumple " + booking.getParentName() + " " + booking.getChildrenCount() + " niños " + booking.getTariff())
-                    .setLocation("Carrer de Colom 453, Nave D52, Terrassa")
-                    .setDescription(buildDescription(booking, roomLabel));
-
-            ZonedDateTime startZoned = booking.getReservationDateTime()
-                    .atZone(ZoneId.of(TIMEZONE));
-            ZonedDateTime endZoned = startZoned.plusHours(EVENT_DURATION_HOURS);
-
-            event.setStart(toEventDateTime(startZoned));
-            event.setEnd(toEventDateTime(endZoned));
-
-            calendarClient.events().insert(targetCalendar, event).execute();
-            log.info("Calendar event created for booking {} in calendar: {}", booking.getId(), targetCalendar);
-        } catch (Exception e) {
-            log.error("Failed to create calendar event for booking {}: {}",
-                    booking.getId(), e.getMessage());
+        String targetCalendar = "SALA_PRIVADA".equals(booking.getRoomPreference())
+                ? calendarSalaPrivada : calendarZonaRestauracion;
+        if (targetCalendar == null || targetCalendar.isBlank()) {
+            log.warn("No calendar ID configured for room: {}", booking.getRoomPreference());
+            return;
         }
+
+        String roomLabel = "SALA_PRIVADA".equals(booking.getRoomPreference())
+                ? "Sala Privada" : "Zona Restauracion";
+        Event event = new Event()
+                .setSummary("Cumple " + booking.getParentName() + " " + booking.getChildrenCount() + " niños " + booking.getTariff())
+                .setLocation("Carrer de Colom 453, Nave D52, Terrassa")
+                .setDescription(buildDescription(booking, roomLabel));
+        ZonedDateTime startZoned = booking.getReservationDateTime().atZone(ZoneId.of(TIMEZONE));
+        event.setStart(toEventDateTime(startZoned));
+        event.setEnd(toEventDateTime(startZoned.plusHours(EVENT_DURATION_HOURS)));
+
+        // Retry to survive transient Google outages (brief token/network failures).
+        // Without this, a single failure silently drops the event with no second attempt
+        // (this is exactly how a booking ended up missing from the calendar).
+        long[] delaysMs = {0, 30_000, 120_000, 300_000, 600_000, 900_000}; // spread over ~15 min
+        for (int attempt = 0; attempt < delaysMs.length; attempt++) {
+            if (delaysMs[attempt] > 0) {
+                try {
+                    Thread.sleep(delaysMs[attempt]);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    return;
+                }
+            }
+            try {
+                calendarClient.events().insert(targetCalendar, event).execute();
+                log.info("Calendar event created for booking {} in calendar: {} (attempt {})",
+                        booking.getId(), targetCalendar, attempt + 1);
+                return;
+            } catch (Exception e) {
+                log.warn("Calendar event attempt {}/{} failed for booking {}: {}",
+                        attempt + 1, delaysMs.length, booking.getId(), e.getMessage());
+            }
+        }
+        log.error("Gave up creating calendar event for booking {} after {} attempts",
+                booking.getId(), delaysMs.length);
     }
 
     public String testCalendar() {
@@ -165,7 +185,7 @@ public class GoogleCalendarService {
 
     private String buildDescription(Booking booking, String roomLabel) {
         return String.format(
-                "Zona: %s\nPadre/Madre: %s\nEmail: %s\nTelefono: %s\nNinos: %s (aprox. %s)\nNotas: %s",
+                "Zona: %s\nDuracion: 2 horas\nPadre/Madre: %s\nEmail: %s\nTelefono: %s\nNinos: %s (aprox. %s)\nNotas: %s",
                 roomLabel,
                 booking.getParentName(),
                 booking.getEmail(),
@@ -174,5 +194,62 @@ public class GoogleCalendarService {
                 booking.getChildrenCount(),
                 booking.getNotes() != null ? booking.getNotes() : "-"
         );
+    }
+
+    /** A timed event read back from a booking calendar (used to merge manual entries into availability). */
+    public record BookedSlot(LocalDate date, LocalTime time, String room, String summary) {}
+
+    /**
+     * Lists timed events from both booking calendars in the given window.
+     * All-day events (holidays, multi-day accommodation blocks) are skipped, so only
+     * real time-slot bookings are returned. Returns an empty list if the calendar
+     * client is unavailable, so callers degrade gracefully to DB-only availability.
+     */
+    public List<BookedSlot> listBookedSlots(LocalDateTime from, LocalDateTime to) {
+        List<BookedSlot> slots = new ArrayList<>();
+        if (calendarClient == null) {
+            return slots;
+        }
+        collectSlots(slots, calendarSalaPrivada, "SALA_PRIVADA", from, to);
+        collectSlots(slots, calendarZonaRestauracion, "ZONA_RESTAURACION", from, to);
+        return slots;
+    }
+
+    private void collectSlots(List<BookedSlot> slots, String calendarId, String room,
+                              LocalDateTime from, LocalDateTime to) {
+        if (calendarId == null || calendarId.isBlank()) {
+            return;
+        }
+        try {
+            ZoneId zone = ZoneId.of(TIMEZONE);
+            com.google.api.client.util.DateTime timeMin =
+                    new com.google.api.client.util.DateTime(Date.from(from.atZone(zone).toInstant()));
+            com.google.api.client.util.DateTime timeMax =
+                    new com.google.api.client.util.DateTime(Date.from(to.atZone(zone).toInstant()));
+
+            Events events = calendarClient.events().list(calendarId)
+                    .setTimeMin(timeMin)
+                    .setTimeMax(timeMax)
+                    .setSingleEvents(true)
+                    .setOrderBy("startTime")
+                    .setMaxResults(2500)
+                    .execute();
+
+            List<Event> items = events.getItems();
+            if (items == null) {
+                return;
+            }
+            for (Event e : items) {
+                EventDateTime start = e.getStart();
+                // Skip all-day events (date set, dateTime null): holidays, accommodation, etc.
+                if (start == null || start.getDateTime() == null) {
+                    continue;
+                }
+                ZonedDateTime z = Instant.ofEpochMilli(start.getDateTime().getValue()).atZone(zone);
+                slots.add(new BookedSlot(z.toLocalDate(), z.toLocalTime(), room, e.getSummary()));
+            }
+        } catch (Exception e) {
+            log.error("Failed to list calendar events for {}: {}", room, e.getMessage());
+        }
     }
 }

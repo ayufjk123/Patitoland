@@ -27,6 +27,9 @@ public class BookingRequest {
     @NotBlank(message = "Room preference is required")
     private String roomPreference;
 
+    /** Party package: "SIMPLE" or "COMPLETA". */
+    private String tariff;
+
     @NotNull(message = "Reservation date/time is required")
     private LocalDateTime reservationDateTime;
 
@@ -34,6 +37,9 @@ public class BookingRequest {
 
     public String getParentName() { return parentName; }
     public void setParentName(String parentName) { this.parentName = parentName; }
+
+    public String getTariff() { return tariff; }
+    public void setTariff(String tariff) { this.tariff = tariff; }
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }

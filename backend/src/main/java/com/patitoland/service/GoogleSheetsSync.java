@@ -17,7 +17,9 @@ import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class GoogleSheetsSync {
@@ -56,10 +58,12 @@ public class GoogleSheetsSync {
 
             List<Booking> bookings = parseCsv(response.body());
 
-            bookingRepository.deleteAll();
+            // Refresh only sheet-sourced rows; website bookings (tariff = 'WEB') are
+            // persisted and must survive the sync (the form does not write to the sheet).
+            bookingRepository.deleteSheetSourced();
             bookingRepository.saveAll(bookings);
 
-            log.info("Sync complete. Saved {} bookings.", bookings.size());
+            log.info("Sync complete. Saved {} sheet bookings (web bookings preserved).", bookings.size());
         } catch (Exception e) {
             log.error("Error during Google Sheets sync", e);
         }
@@ -67,6 +71,7 @@ public class GoogleSheetsSync {
 
     private List<Booking> parseCsv(String csvContent) throws Exception {
         List<Booking> bookings = new ArrayList<>();
+        Set<BookingIdentity> seenBookings = new HashSet<>();
 
         try (CSVReader reader = new CSVReader(new java.io.StringReader(csvContent))) {
             // Skip header row
@@ -100,8 +105,14 @@ public class GoogleSheetsSync {
                     booking.setTariff(mapTariff(line[8].trim()));
                     // Column 9: Notes
                     booking.setNotes(line.length > 9 ? line[9].trim() : "");
+                    booking.setSource("SHEET");
 
-                    bookings.add(booking);
+                    if (seenBookings.add(BookingIdentity.from(booking))) {
+                        bookings.add(booking);
+                    } else {
+                        log.warn("Skipping duplicate Google Sheets booking at {}",
+                                booking.getReservationDateTime());
+                    }
                 } catch (Exception e) {
                     log.warn("Failed to parse CSV row: {}", String.join(",", line), e);
                 }
@@ -109,6 +120,32 @@ public class GoogleSheetsSync {
         }
 
         return bookings;
+    }
+
+    private record BookingIdentity(
+            String email,
+            String phone,
+            String parentName,
+            String childrenNames,
+            String childrenCount,
+            String roomPreference,
+            LocalDateTime reservationDateTime,
+            String tariff,
+            String notes
+    ) {
+        private static BookingIdentity from(Booking booking) {
+            return new BookingIdentity(
+                    booking.getEmail(),
+                    booking.getPhone(),
+                    booking.getParentName(),
+                    booking.getChildrenNames(),
+                    booking.getChildrenCount(),
+                    booking.getRoomPreference(),
+                    booking.getReservationDateTime(),
+                    booking.getTariff(),
+                    booking.getNotes()
+            );
+        }
     }
 
     private LocalDateTime parseDateTime(String value) {

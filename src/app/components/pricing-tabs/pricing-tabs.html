@@ -9,6 +9,9 @@
       <button class="tab-btn" [class.active]="activeTab === 'under2'" (click)="setTab('under2')">
         {{ 'PRICING.TAB_UNDER2' | translate }}
       </button>
+      <button class="tab-btn" [class.active]="activeTab === 'birthday'" (click)="setTab('birthday')">
+        {{ 'PRICING.TAB_BIRTHDAY' | translate }}
+      </button>
       <button class="tab-btn" [class.active]="activeTab === 'rules'" (click)="setTab('rules')">
         {{ 'PRICING.TAB_RULES' | translate }}
       </button>
@@ -23,15 +26,9 @@
               <i class="fas fa-clock"></i>
               <h3>{{ 'PRICING.WEEKDAY' | translate }}</h3>
             </div>
-            <div class="price-list">
-              <div class="price-item">
-                <span>{{ 'PRICING.HOUR_1' | translate }}</span>
-                <span class="price">8&euro;</span>
-              </div>
-              <div class="price-item">
-                <span>{{ 'PRICING.HOUR_2' | translate }}</span>
-                <span class="price">13&euro;</span>
-              </div>
+            <div class="maintenance-only">
+              <i class="fas fa-tools"></i>
+              <p>{{ 'PRICING.WEEKDAY_MAINTENANCE_ONLY' | translate }}</p>
             </div>
           </div>
 
@@ -50,9 +47,22 @@
                 <span>{{ 'PRICING.HOUR_2' | translate }}</span>
                 <span class="price">17&euro;</span>
               </div>
+              <div class="price-section-label">
+                <i class="fas fa-clock-rotate-left"></i>
+                {{ 'PRICING.EXTRA_TIME_TITLE' | translate }}
+              </div>
+              <div class="price-item additional-time">
+                <span>{{ 'PRICING.EXTRA_30_MIN' | translate }}</span>
+                <span class="price">4&euro;</span>
+              </div>
+              <div class="price-item additional-time">
+                <span>{{ 'PRICING.EXTRA_1_HOUR' | translate }}</span>
+                <span class="price">8&euro;</span>
+              </div>
             </div>
           </div>
         </div>
+
       </div>
     }
 
@@ -65,15 +75,9 @@
               <i class="fas fa-baby"></i>
               <h3>{{ 'PRICING.WEEKDAY' | translate }}</h3>
             </div>
-            <div class="price-list">
-              <div class="price-item">
-                <span>{{ 'PRICING.HOUR_1' | translate }}</span>
-                <span class="price">4&euro;</span>
-              </div>
-              <div class="price-item">
-                <span>{{ 'PRICING.HOUR_2' | translate }}</span>
-                <span class="price">6,50&euro;</span>
-              </div>
+            <div class="maintenance-only">
+              <i class="fas fa-tools"></i>
+              <p>{{ 'PRICING.WEEKDAY_MAINTENANCE_ONLY' | translate }}</p>
             </div>
           </div>
 
@@ -93,6 +97,74 @@
               </div>
             </div>
           </div>
+        </div>
+
+        <div class="under2-proof-note animate-fade-up delay-500">
+          <i class="fas fa-id-card"></i>
+          <p>{{ 'PRICING.UNDER2_ID_REQUIRED' | translate }}</p>
+        </div>
+      </div>
+    }
+
+    <!-- Birthday packages -->
+    @if (activeTab === 'birthday') {
+      <div class="tab-content">
+        <div class="time-grid">
+          <div class="time-card animate-bounce-in delay-300">
+            <div class="time-header">
+              <i class="fas fa-star"></i>
+              <h3>{{ 'PRICING.BDAY_SIMPLE_NAME' | translate }}</h3>
+            </div>
+            <ul class="bday-list">
+              <li>{{ 'PRICING.BDAY_INC_ROOM' | translate }}</li>
+              <li>{{ 'PRICING.BDAY_INC_SOCKS' | translate }}</li>
+              <li>{{ 'PRICING.BDAY_INC_BERENAR' | translate }}</li>
+            </ul>
+            <div class="bday-prices">
+              <div class="bday-price-row">
+                <span>{{ 'PRICING.BDAY_TIME_WEEKDAY' | translate }}</span>
+                <span class="price">17&euro;</span>
+              </div>
+              <div class="bday-price-row">
+                <span>{{ 'PRICING.BDAY_TIME_WEEKEND' | translate }}</span>
+                <span class="price">20&euro;</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="time-card weekend animate-bounce-in delay-400">
+            <div class="time-header">
+              <i class="fas fa-crown"></i>
+              <h3>{{ 'PRICING.BDAY_COMPLETA_NAME' | translate }}</h3>
+            </div>
+            <ul class="bday-list">
+              <li>{{ 'PRICING.BDAY_INC_ROOM' | translate }}</li>
+              <li>{{ 'PRICING.BDAY_INC_SOCKS' | translate }}</li>
+              <li>{{ 'PRICING.BDAY_INC_BERENAR' | translate }}</li>
+              <li>{{ 'PRICING.BDAY_INC_DRINKS' | translate }}</li>
+            </ul>
+            <div class="bday-prices">
+              <div class="bday-price-row">
+                <span>{{ 'PRICING.BDAY_TIME_WEEKDAY' | translate }}</span>
+                <span class="price">20&euro;</span>
+              </div>
+              <div class="bday-price-row">
+                <span>{{ 'PRICING.BDAY_TIME_WEEKEND' | translate }}</span>
+                <span class="price">23&euro;</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="berenar-box animate-fade-up delay-500">
+          <h4><i class="fas fa-cookie-bite"></i> {{ 'PRICING.BERENAR_TITLE' | translate }}</h4>
+          <ul>
+            <li>{{ 'PRICING.BERENAR_1' | translate }}</li>
+            <li>{{ 'PRICING.BERENAR_2' | translate }}</li>
+            <li>{{ 'PRICING.BERENAR_3' | translate }}</li>
+            <li>{{ 'PRICING.BERENAR_4' | translate }}</li>
+            <li>{{ 'PRICING.BERENAR_5' | translate }}</li>
+          </ul>
         </div>
       </div>
     }

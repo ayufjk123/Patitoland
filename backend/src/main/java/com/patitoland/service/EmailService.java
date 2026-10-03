@@ -108,14 +108,20 @@ public class EmailService {
                 "Tu reserva ha sido confirmada con los siguientes datos:\n\n" +
                 "Fecha: %s\n" +
                 "Hora: %s\n" +
+                "Duracion: 2 horas\n" +
                 "Zona: %s\n" +
+                "Tarifa: %s\n" +
                 "Ninos: %s (aprox. %s)\n" +
                 "Telefono: %s\n\n" +
+                "IMPORTANTE - Paga y senal:\n" +
+                "Para confirmar la reserva es necesaria una paga y senal de 50 EUR mediante transferencia bancaria.\n" +
+                "Cuenta (IBAN): ES65 0182 8109 8902 0250 7673\n" +
+                "Indica en el concepto el nombre de la reserva y la fecha. Muchas gracias!\n\n" +
                 "Te esperamos en PatitoLand!\n" +
                 "Carrer de Colom 453, Nave D52, Terrassa\n" +
                 "Tel: 603 31 55 76",
                 booking.getParentName(),
-                date, time, roomLabel,
+                date, time, roomLabel, booking.getTariff(),
                 booking.getChildrenNames(),
                 booking.getChildrenCount(),
                 booking.getPhone()
@@ -134,13 +140,15 @@ public class EmailService {
                 "Nueva reserva recibida:\n\n" +
                 "Fecha: %s\n" +
                 "Hora: %s\n" +
+                "Duracion: 2 horas\n" +
                 "Zona: %s\n" +
+                "Tarifa: %s\n" +
                 "Padre/Madre: %s\n" +
                 "Email: %s\n" +
                 "Telefono: %s\n" +
                 "Ninos: %s (aprox. %s)\n" +
                 "Notas: %s",
-                date, time, roomLabel,
+                date, time, roomLabel, booking.getTariff(),
                 booking.getParentName(),
                 booking.getEmail(),
                 booking.getPhone(),

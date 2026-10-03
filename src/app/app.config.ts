@@ -17,6 +17,6 @@ export const appConfig: ApplicationConfig = {
         fallbackLang: 'ca'
       })
     ),
-    provideTranslateHttpLoader({ prefix: './i18n/', suffix: '.json' })
+    provideTranslateHttpLoader({ prefix: './i18n/', suffix: '.json?v=20260719' })
   ]
 };

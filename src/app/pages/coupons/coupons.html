@@ -1,0 +1,184 @@
+<section class="coupons-page">
+  <!-- Login -->
+  @if (!authed()) {
+    <div class="login-card">
+      <h1><i class="fas fa-ticket-alt"></i> Validar cupones</h1>
+      <p>Introduce la contraseña de personal</p>
+      <input
+        type="password"
+        placeholder="Contraseña"
+        [ngModel]="passwordInput()"
+        (ngModelChange)="passwordInput.set($event)"
+        (keyup.enter)="login()"
+        autocomplete="off"
+      />
+      @if (authError()) {
+        <div class="error-msg"><i class="fas fa-exclamation-circle"></i> Contraseña incorrecta</div>
+      }
+      <button class="btn-primary" (click)="login()">Entrar</button>
+    </div>
+  } @else {
+    <!-- Validation tool -->
+    <div class="tool-card">
+      <div class="tool-header">
+        <h1><i class="fas fa-ticket-alt"></i> Validar cupones</h1>
+        <button class="btn-link" (click)="logout()">Salir</button>
+      </div>
+
+      <div class="check-row">
+        <input
+          type="text"
+          class="code-input"
+          placeholder="Código del cupón"
+          [ngModel]="code()"
+          (ngModelChange)="code.set($event)"
+          (keyup.enter)="validate()"
+          autocapitalize="characters"
+          autocomplete="off"
+        />
+        <button class="btn-primary" (click)="validate()" [disabled]="checking() || !code().trim()">
+          {{ checking() ? 'Comprobando…' : 'Validar' }}
+        </button>
+        @if (scanSupported) {
+          <button class="btn-scan" (click)="startScan()" title="Escanear QR">
+            <i class="fas fa-qrcode"></i>
+          </button>
+        }
+      </div>
+
+      @if (scanning()) {
+        <div class="scanner">
+          <video id="scan-video" muted playsinline></video>
+          <div class="scanner-hint">Apunta al código QR del cupón</div>
+          <button class="btn-link" (click)="stopScan()">Cancelar</button>
+        </div>
+      }
+      @if (scanError()) {
+        <div class="error-msg"><i class="fas fa-exclamation-circle"></i> No se pudo acceder a la cámara</div>
+      }
+
+      <!-- Result -->
+      @if (result(); as r) {
+        <div class="result"
+             [class.ok]="r.status === 'VALID' || r.status === 'REDEEMED'"
+             [class.bad]="r.status === 'INVALID' || r.status === 'EXPIRED' || r.status === 'USED'">
+          <div class="result-status">
+            @switch (r.status) {
+              @case ('VALID')    { <i class="fas fa-check-circle"></i> Válido }
+              @case ('REDEEMED') { <i class="fas fa-check-circle"></i> Canjeado correctamente }
+              @case ('INVALID')  { <i class="fas fa-times-circle"></i> El cupón no existe }
+              @case ('EXPIRED')  { <i class="fas fa-times-circle"></i> Cupón caducado }
+              @case ('USED')     { <i class="fas fa-times-circle"></i> Cupón ya usado }
+            }
+          </div>
+
+          @if (r.status !== 'INVALID') {
+            <div class="result-detail">
+              <div><span>Código:</span> <strong>{{ r.code }}</strong></div>
+              @if (r.discountValue != null) {
+                <div><span>Descuento:</span> <strong>{{ discountText(r) }}</strong></div>
+              }
+              @if (r.label) { <div><span>Etiqueta:</span> {{ r.label }}</div> }
+              @if (r.validUntil) { <div><span>Válido hasta:</span> {{ r.validUntil }}</div> }
+              @if (r.redeemedAt) {
+                <div><span>Canjeado el:</span> {{ r.redeemedAt }}</div>
+                <div><span>Lugar de canje:</span> Patitoland Terrassa · Carrer de Colom 453, Nave D52</div>
+              }
+            </div>
+          }
+
+          <div class="result-actions">
+            @if (r.status === 'VALID') {
+              <button class="btn-redeem" (click)="redeem()" [disabled]="redeeming()">
+                <i class="fas fa-stamp"></i> {{ redeeming() ? 'Canjeando…' : 'Canjear ahora' }}
+              </button>
+            }
+            <button class="btn-link" (click)="newCheck()">Nueva consulta</button>
+          </div>
+        </div>
+      }
+
+      <!-- Generate (collapsible) -->
+      <div class="generate-section">
+        <button class="btn-toggle" (click)="showGenerate.set(!showGenerate())">
+          <i class="fas" [class.fa-chevron-right]="!showGenerate()" [class.fa-chevron-down]="showGenerate()"></i>
+          Generar cupones
+        </button>
+
+        @if (showGenerate()) {
+          <div class="generate-form">
+            <div class="design-preview">
+              <img src="/img/coupon-template-10-euros.png" alt="Diseño del vale de 10 euros de Patitoland" />
+              <small>El PDF adapta el importe, porcentaje o entrada gratuita y añade un QR real con el código de cada cupón.</small>
+            </div>
+            <label>Cantidad
+              <input type="number" min="1" max="100" [ngModel]="genCount()" (ngModelChange)="genCount.set(+$event)" />
+              <small>Entre 1 y 100 cupones por PDF</small>
+            </label>
+            <label>Tipo
+              <select [ngModel]="genType()" (ngModelChange)="genType.set($event)">
+                <option value="FREE">Entrada gratis</option>
+                <option value="PERCENT">Porcentaje (%)</option>
+                <option value="FIXED">Importe fijo (€)</option>
+              </select>
+            </label>
+            @if (genType() !== 'FREE') {
+              <label>Valor
+                <input type="number" min="0.01" step="0.01" [max]="genType() === 'PERCENT' ? 100 : null" [ngModel]="genValue()" (ngModelChange)="genValue.set(+$event)" />
+                @if (genType() === 'PERCENT' && genValue() > 100) {
+                  <small class="field-error">El porcentaje no puede superar el 100 %</small>
+                }
+              </label>
+            } @else {
+              <small>Se registrará como un descuento del 100 % y el PDF mostrará “ENTRADA GRATIS”.</small>
+            }
+            <label>Válido hasta (opcional)
+              <input type="date" [min]="today" [ngModel]="genValidUntil()" (ngModelChange)="genValidUntil.set($event)" />
+            </label>
+            <label>Etiqueta (opcional)
+              <input type="text" maxlength="100" placeholder="p. ej. Verano 2026" [ngModel]="genLabel()" (ngModelChange)="genLabel.set($event)" />
+            </label>
+            <label class="checkbox">
+              <input type="checkbox" [ngModel]="genSingleUse()" (ngModelChange)="genSingleUse.set($event)" />
+              Un solo uso
+            </label>
+            @if (generateError()) {
+              <div class="error-msg"><i class="fas fa-exclamation-circle"></i> {{ generateError() }}</div>
+            }
+            <button class="btn-primary" (click)="generate()" [disabled]="generating() || !canGenerate()">
+              {{ generating() ? 'Generando…' : 'Generar' }}
+            </button>
+          </div>
+
+          @if (genCodes().length) {
+            <div class="gen-result">
+              <div class="gen-result-head">
+                <strong>{{ genCodes().length }} cupones generados</strong>
+                <div class="gen-actions">
+                  <button class="btn-link" (click)="copyCodes()">
+                    <i class="fas" [class.fa-check]="copyDone()" [class.fa-copy]="!copyDone()"></i>
+                    {{ copyDone() ? 'Copiados' : 'Copiar' }}
+                  </button>
+                  <button class="btn-link" (click)="downloadCsv()"><i class="fas fa-download"></i> Descargar CSV</button>
+                </div>
+              </div>
+              <button class="btn-pdf" (click)="downloadDesignedPdf()" [disabled]="pdfExporting() || !canDownloadDesignedPdf()">
+                <i class="fas fa-file-pdf"></i>
+                {{ pdfExporting() ? 'Creando PDF…' : 'Descargar cupones con diseño' }}
+              </button>
+              @if (genCodes().length > 100) {
+                <small class="pdf-hint">El PDF admite hasta 100 cupones. Genera lotes más pequeños para descargar el diseño.</small>
+              }
+              @if (pdfError()) {
+                <div class="error-msg"><i class="fas fa-exclamation-circle"></i> {{ pdfError() }}</div>
+              }
+              <ul>
+                @for (c of genCodes(); track c) { <li>{{ c }}</li> }
+              </ul>
+            </div>
+          }
+        }
+      </div>
+    </div>
+  }
+</section>

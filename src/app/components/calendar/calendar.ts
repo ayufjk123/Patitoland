@@ -8,6 +8,7 @@ import {
   DateDetail,
   SlotDetail,
   RoomType,
+  TariffType,
 } from '../../services/booking';
 
 interface CalendarDay {
@@ -29,6 +30,7 @@ export class CalendarComponent implements OnInit {
   selectedDate = signal<string | null>(null);
   selectedTime = signal<string | null>(null);
   selectedRoom = signal<RoomType | null>(null);
+  selectedTariff = signal<TariffType | null>(null);
   dateDetail = signal<DateDetail | null>(null);
   loadingMonth = signal(false);
   loadingDetail = signal(false);
@@ -82,6 +84,19 @@ export class CalendarComponent implements OnInit {
 
   showForm = computed(() => {
     return !!this.selectedDate() && !!this.selectedRoom() && !!this.selectedTime();
+  });
+
+  /**
+   * Whether the selected date uses the WEEKEND birthday rate. Per the price list this is
+   * Friday, Saturday, Sunday and holidays — note this differs from the capacity rule
+   * (isWeekendOrHoliday), which counts only Sat/Sun/holidays (Friday has weekday capacity).
+   */
+  selectedIsWeekend = computed(() => {
+    const d = this.selectedDate();
+    if (!d) return false;
+    const [y, m, day] = d.split('-').map(Number);
+    const dt = new Date(y, m - 1, day);
+    return dt.getDay() === 5 || this.isWeekendOrHoliday(dt);
   });
 
   private readonly BLOCK_MINUTES = 180; // 3 hours
@@ -304,6 +319,26 @@ export class CalendarComponent implements OnInit {
     return this.selectedRoom() === room;
   }
 
+  selectTariff(tariff: TariffType): void {
+    this.selectedTariff.set(this.selectedTariff() === tariff ? null : tariff);
+  }
+
+  isTariffSelected(tariff: TariffType): boolean {
+    return this.selectedTariff() === tariff;
+  }
+
+  /** Price in € for a tariff on the selected date (weekday vs weekend/holiday). */
+  tariffPrice(tariff: TariffType): number {
+    const weekend = this.selectedIsWeekend();
+    if (tariff === 'SIMPLE') return weekend ? 20 : 17;
+    return weekend ? 23 : 20;
+  }
+
+  /** New birthday reservations are two hours on every day. */
+  tariffTimeKey(): string {
+    return 'CALENDAR.TARIFF_TIME_2H';
+  }
+
   private timeToMinutes(time: string): number {
     const [h, m] = time.split(':').map(Number);
     return h * 60 + m;
@@ -331,7 +366,8 @@ export class CalendarComponent implements OnInit {
     const date = this.selectedDate();
     const time = this.selectedTime();
     const room = this.selectedRoom();
-    if (!date || !time || !room) return;
+    const tariff = this.selectedTariff();
+    if (!date || !time || !room || !tariff) return;
 
     this.submitting.set(true);
     this.submitError.set(null);
@@ -346,6 +382,7 @@ export class CalendarComponent implements OnInit {
       childrenNames: this.childrenNames(),
       childrenCount: this.childrenCount(),
       roomPreference: room,
+      tariff,
       reservationDateTime,
       notes: this.notes() || undefined,
     }).subscribe({
@@ -372,5 +409,6 @@ export class CalendarComponent implements OnInit {
     this.notes.set('');
     this.selectedTime.set(null);
     this.selectedRoom.set(null);
+    this.selectedTariff.set(null);
   }
 }

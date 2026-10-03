@@ -488,6 +488,114 @@
   }
 }
 
+.tariff-btn {
+  flex-direction: column;
+  gap: 0.25rem;
+  text-align: center;
+
+  .tariff-name {
+    font-weight: 700;
+    i { margin-right: 0.3rem; }
+  }
+
+  .tariff-meta {
+    font-size: 0.82rem;
+    opacity: 0.85;
+  }
+}
+
+.items-policy {
+  margin: 0.9rem 0 1.2rem;
+
+  h6 {
+    margin: 0 0 0.6rem;
+    color: var(--text-main);
+    font-size: 0.9rem;
+    font-weight: 800;
+  }
+}
+
+.items-policy-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.items-policy-section {
+  padding: 0.85rem 1rem;
+
+  & + & {
+    border-left: 1px solid var(--border-light);
+  }
+
+  strong {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 0.35rem;
+    font-size: 0.86rem;
+  }
+
+  p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    line-height: 1.45;
+  }
+
+  &.allowed {
+    background: #f0fdf4;
+
+    strong { color: #166534; }
+  }
+
+  &.forbidden {
+    background: #fff7ed;
+
+    strong { color: #9a3412; }
+  }
+}
+
+.deposit-notice {
+  display: flex;
+  gap: 0.8rem;
+  align-items: flex-start;
+  background: #fff8e1;
+  border: 1px solid #ffe082;
+  border-radius: var(--radius-md, 12px);
+  padding: 0.9rem 1rem;
+  margin-bottom: 1.2rem;
+
+  > i {
+    color: #f5a623;
+    font-size: 1.3rem;
+    margin-top: 0.15rem;
+  }
+
+  .deposit-body {
+    font-size: 0.9rem;
+    color: var(--text-main);
+    line-height: 1.45;
+
+    strong { color: var(--primary-dark); }
+
+    p { margin: 0.3rem 0 0; }
+
+    .deposit-iban strong {
+      font-family: monospace;
+      letter-spacing: 0.5px;
+      color: var(--text-main);
+    }
+
+    .deposit-concept {
+      color: var(--text-muted);
+      font-size: 0.82rem;
+    }
+  }
+}
+
 .form-group {
   margin-bottom: 1rem;
 
@@ -605,5 +713,14 @@ textarea.form-input {
   .time-slot {
     font-size: 0.8rem;
     padding: 0.45rem 0.3rem;
+  }
+
+  .items-policy-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .items-policy-section + .items-policy-section {
+    border-left: 0;
+    border-top: 1px solid var(--border-light);
   }
 }

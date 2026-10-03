@@ -4,6 +4,7 @@ import { Observable, map } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 export type RoomType = 'SALA_PRIVADA' | 'ZONA_RESTAURACION';
+export type TariffType = 'SIMPLE' | 'COMPLETA';
 
 export interface DayAvailability {
   date: string;
@@ -108,6 +109,7 @@ export interface BookingRequest {
   childrenNames: string;
   childrenCount: string;
   roomPreference: RoomType;
+  tariff: TariffType;
   reservationDateTime: string;
   notes?: string;
 }

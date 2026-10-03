@@ -26,6 +26,11 @@ public class BookingController {
     private static final int BLOCK_HOURS = 3;
     private static final int ZONA_MAX_CONCURRENT = 2;
 
+    // Calendar events outside these hours are treated as noise (e.g. 00:00 / 06:00 junk entries)
+    // and ignored when merging the calendar into availability.
+    private static final LocalTime BUSINESS_OPEN = LocalTime.of(9, 0);
+    private static final LocalTime BUSINESS_CLOSE = LocalTime.of(22, 0);
+
     private static final Set<LocalDate> HOLIDAYS = Set.of(
             // 2025 holidays (national + Catalonia)
             LocalDate.of(2025, 1, 1),
@@ -84,16 +89,25 @@ public class BookingController {
             return ResponseEntity.badRequest().body(Map.of("error", "Invalid room type"));
         }
 
-        // Check 3-hour block window
+        // Check the 3-hour block window against BOTH sources: the DB (web + sheet bookings)
+        // and the Google Calendar (manual + phone entries). Reject if EITHER source is already
+        // full, so manual calendar entries also prevent a conflicting online booking.
         LocalDateTime windowStart = dateTime.minusHours(BLOCK_HOURS);
         LocalDateTime windowEnd = dateTime.plusHours(BLOCK_HOURS);
 
-        List<Booking> conflicting = bookingRepository
-                .findByRoomPreferenceAndReservationDateTimeBetween(room, windowStart, windowEnd);
+        long dbConflicting = bookingRepository
+                .findByRoomPreferenceAndReservationDateTimeBetween(room, windowStart, windowEnd)
+                .size();
+
+        // listBookedSlots degrades to empty on calendar failure, so booking still works if the
+        // calendar is unreachable (the DB check remains).
+        long calConflicting = googleCalendarService.listBookedSlots(windowStart, windowEnd).stream()
+                .filter(s -> room.equals(s.room()))
+                .count();
 
         int maxAllowed = "SALA_PRIVADA".equals(room) ? 1 : ZONA_MAX_CONCURRENT;
 
-        if (conflicting.size() >= maxAllowed) {
+        if (dbConflicting >= maxAllowed || calConflicting >= maxAllowed) {
             String msg = "SALA_PRIVADA".equals(room)
                     ? "Sala privada is not available within this 3-hour window"
                     : "Zona restauración has reached the maximum of 2 bookings within this 3-hour window";
@@ -109,7 +123,10 @@ public class BookingController {
         booking.setChildrenCount(request.getChildrenCount());
         booking.setRoomPreference(room);
         booking.setReservationDateTime(dateTime);
-        booking.setTariff("WEB");
+        // Customer-selected party package; default to COMPLETA if not provided.
+        String tariff = request.getTariff();
+        booking.setTariff("SIMPLE".equals(tariff) || "COMPLETA".equals(tariff) ? tariff : "COMPLETA");
+        booking.setSource("WEB");
         booking.setNotes(request.getNotes() != null ? request.getNotes() : "");
 
         Booking saved = bookingRepository.save(booking);
@@ -133,64 +150,65 @@ public class BookingController {
 
         List<Booking> bookings = bookingRepository.findByReservationDateTimeBetween(start, end);
 
-        // Group bookings by date
-        Map<LocalDate, List<Booking>> bookingsByDate = bookings.stream()
-                .filter(b -> b.getReservationDateTime() != null)
-                .collect(Collectors.groupingBy(b -> b.getReservationDateTime().toLocalDate()));
+        // Two independent sources of truth (currently inconsistent): the DB (online form +
+        // Google Sheet sync) and the Google Calendar (manual + phone + walk-in entries).
+        // We can't reliably de-duplicate them, so instead of merging we evaluate each
+        // source's availability separately and require BOTH to agree there is room.
+        // This is conservative (a day may show full if either source is full) but never
+        // allows a double-booking, and manual calendar entries now reduce availability.
+        Map<LocalDate, List<Slot>> dbByDate = new HashMap<>();
+        for (Booking b : bookings) {
+            if (b.getReservationDateTime() == null) continue;
+            dbByDate.computeIfAbsent(b.getReservationDateTime().toLocalDate(), k -> new ArrayList<>())
+                    .add(new Slot(b.getReservationDateTime().toLocalTime(), b.getRoomPreference(), b.getTariff()));
+        }
+
+        Map<LocalDate, List<Slot>> calByDate = new HashMap<>();
+        for (GoogleCalendarService.BookedSlot cs : googleCalendarService.listBookedSlots(start, end)) {
+            LocalTime t = cs.time();
+            if (t.isBefore(BUSINESS_OPEN) || t.isAfter(BUSINESS_CLOSE)) continue; // drop noise events
+            calByDate.computeIfAbsent(cs.date(), k -> new ArrayList<>())
+                    .add(new Slot(t, cs.room(), "MANUAL"));
+        }
+
+        Set<LocalDate> allDates = new TreeSet<>();
+        allDates.addAll(dbByDate.keySet());
+        allDates.addAll(calByDate.keySet());
 
         Map<String, Object> result = new LinkedHashMap<>();
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
-        for (Map.Entry<LocalDate, List<Booking>> entry : bookingsByDate.entrySet()) {
-            LocalDate date = entry.getKey();
-            List<Booking> dayBookings = entry.getValue();
+        for (LocalDate date : allDates) {
+            List<Slot> dbSlots = dbByDate.getOrDefault(date, List.of());
+            List<Slot> calSlots = calByDate.getOrDefault(date, List.of());
             boolean isWeekendOrHoliday = isWeekendOrHoliday(date);
 
-            Map<String, Object> dayInfo = new LinkedHashMap<>();
-            dayInfo.put("totalBookings", dayBookings.size());
+            // Available only if BOTH sources have room (conservative, never double-books).
+            boolean available = hasRoom(isWeekendOrHoliday, dbSlots) && hasRoom(isWeekendOrHoliday, calSlots);
 
-            boolean privateRoomBooked = dayBookings.stream()
-                    .anyMatch(b -> "SALA_PRIVADA".equals(b.getRoomPreference()));
-            dayInfo.put("privateRoomBooked", privateRoomBooked);
+            int totalBookings = Math.max(dbSlots.size(), calSlots.size());
+            boolean privateRoomBooked =
+                    dbSlots.stream().anyMatch(s -> "SALA_PRIVADA".equals(s.room()))
+                 || calSlots.stream().anyMatch(s -> "SALA_PRIVADA".equals(s.room()));
 
-            List<Map<String, String>> slots = dayBookings.stream()
-                    .map(b -> {
+            // Show the busier source's booked times (avoids showing the same booking twice).
+            List<Slot> shown = calSlots.size() > dbSlots.size() ? calSlots : dbSlots;
+            List<Map<String, String>> slots = shown.stream()
+                    .map(s -> {
                         Map<String, String> slot = new LinkedHashMap<>();
-                        slot.put("time", b.getReservationDateTime().format(timeFormatter));
-                        slot.put("room", b.getRoomPreference());
-                        slot.put("tariff", b.getTariff());
+                        slot.put("time", s.time().format(timeFormatter));
+                        slot.put("room", s.room());
+                        slot.put("tariff", s.tariff());
                         return slot;
                     })
                     .collect(Collectors.toList());
+
+            Map<String, Object> dayInfo = new LinkedHashMap<>();
+            dayInfo.put("totalBookings", totalBookings);
+            dayInfo.put("privateRoomBooked", privateRoomBooked);
             dayInfo.put("slots", slots);
-
-            int maxBookings;
-            boolean available;
-
-            if (isWeekendOrHoliday) {
-                // Weekend/holiday: max 3 per half-day, 6 total
-                // Max 1 private room per half-day
-                maxBookings = 6;
-
-                List<Booking> morningBookings = dayBookings.stream()
-                        .filter(b -> b.getReservationDateTime().getHour() < 15)
-                        .collect(Collectors.toList());
-                List<Booking> afternoonBookings = dayBookings.stream()
-                        .filter(b -> b.getReservationDateTime().getHour() >= 15)
-                        .collect(Collectors.toList());
-
-                boolean morningFull = morningBookings.size() >= 3;
-                boolean afternoonFull = afternoonBookings.size() >= 3;
-
-                available = !morningFull || !afternoonFull;
-            } else {
-                // Weekday: max 3 total, max 1 private room
-                maxBookings = 3;
-                available = dayBookings.size() < 3;
-            }
-
-            dayInfo.put("maxBookings", maxBookings);
+            dayInfo.put("maxBookings", isWeekendOrHoliday ? 6 : 3);
             dayInfo.put("available", available);
 
             result.put(date.format(dateFormatter), dayInfo);
@@ -198,6 +216,19 @@ public class BookingController {
 
         return ResponseEntity.ok(result);
     }
+
+    /** Capacity rule for one source on one day: weekday = 3/day; weekend/holiday = 3 per half-day. */
+    private boolean hasRoom(boolean isWeekendOrHoliday, List<Slot> slots) {
+        if (isWeekendOrHoliday) {
+            long morning = slots.stream().filter(s -> s.time().getHour() < 15).count();
+            long afternoon = slots.stream().filter(s -> s.time().getHour() >= 15).count();
+            return morning < 3 || afternoon < 3;
+        }
+        return slots.size() < 3;
+    }
+
+    /** An effective booked time slot from either source. */
+    private record Slot(LocalTime time, String room, String tariff) {}
 
     @GetMapping("/date/{date}")
     public ResponseEntity<List<Map<String, Object>>> getBookingsByDate(@PathVariable String date) {

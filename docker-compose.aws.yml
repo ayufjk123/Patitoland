@@ -1,0 +1,53 @@
+services:
+  backend:
+    environment:
+      JAVA_OPTS: "-Xms128m -Xmx640m -XX:+UseG1GC"
+    mem_limit: 768m
+
+  postgres:
+    mem_limit: 384m
+
+  stockfacil:
+    build:
+      context: ../Inventario
+      dockerfile: Dockerfile
+    container_name: stockfacil
+    restart: unless-stopped
+    environment:
+      PORT: 3000
+      DATABASE_PATH: /app/data/inventory.db
+      APP_AUTH_USER: ${APP_AUTH_USER:-inventario}
+      APP_PASSWORD_HASH: ${APP_PASSWORD_HASH:?APP_PASSWORD_HASH must be set in .env}
+      APP_SESSION_SECRET: ${APP_SESSION_SECRET:?APP_SESSION_SECRET must be set in .env}
+      APP_COOKIE_PATH: ${APP_COOKIE_PATH:-/inventario/}
+      APP_COOKIE_SECURE: ${APP_COOKIE_SECURE:-true}
+      SOURCE_DB_HOST: ${SOURCE_DB_HOST:-192.168.110.89}
+      SOURCE_DB_PORT: ${SOURCE_DB_PORT:-1433}
+      SOURCE_DB_NAME: ${SOURCE_DB_NAME:-RES}
+      SOURCE_DB_USER: ${SOURCE_DB_USER:-}
+      SOURCE_DB_PASSWORD: ${SOURCE_DB_PASSWORD:-}
+      SOURCE_DB_ENCRYPT: ${SOURCE_DB_ENCRYPT:-false}
+      SOURCE_DB_TRUST_CERT: ${SOURCE_DB_TRUST_CERT:-true}
+    volumes:
+      - ../Inventario/data:/app/data
+    mem_limit: 256m
+    networks:
+      - internal
+
+  caddy:
+    depends_on:
+      - backend
+      - stockfacil
+    environment:
+      CADDY_SITE_ADDRESS: ${CADDY_SITE_ADDRESS:-:80}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile.aws:/etc/caddy/Caddyfile:ro
+      - ./dist/patitoland-app/browser:/srv:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    mem_limit: 128m
+

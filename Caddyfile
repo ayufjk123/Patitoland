@@ -1,0 +1,69 @@
+# PatitoLand reverse proxy + SPA server
+#
+# Cloudflare Tunnel terminates TLS upstream, so this listens on plain HTTP :80
+# inside the container network. No host port is published.
+
+:80 {
+	encode zstd gzip
+
+	# Independent real-time inventory app. The prefix is stripped before
+	# proxying so its Node service can keep root-level /api and /ws routes.
+	@inventoryRoot path /inventario
+	redir @inventoryRoot /inventario/ 308
+	handle_path /inventario/* {
+		reverse_proxy stockfacil:3000
+	}
+
+	# Backend API. handle (not handle_path) preserves the /api prefix because
+	# the Spring controllers are already mapped under /api/**.
+	handle /api/* {
+		reverse_proxy backend:8080 {
+			header_up X-Real-IP {remote_host}
+			header_up X-Forwarded-Proto https
+		}
+	}
+
+	# Angular SPA. try_files makes client-side routes (/galeria, /tarifas, ...)
+	# fall back to index.html so a refresh on a deep link still works.
+	handle {
+		root * /srv
+		try_files {path} /index.html
+		file_server
+	}
+
+	# Security headers. HSTS is safe because CF only serves us over HTTPS.
+	header {
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		-Server
+	}
+
+	# Force index.html to revalidate so users see new deploys immediately.
+	@indexHtml {
+		path /index.html / /galeria /tarifas /cumpleanos /promociones /normas /contacto /cupones
+	}
+	header @indexHtml Cache-Control "no-cache, no-store, must-revalidate"
+
+	# Translation files keep stable names, so they must revalidate after each deploy.
+	@translations path /i18n/*.json
+	header @translations Cache-Control "no-cache, no-store, must-revalidate"
+
+	# Long cache for fingerprinted Angular build assets (main.<hash>.js, etc).
+	@assets {
+		path *.js *.css *.woff *.woff2 *.png *.jpg *.jpeg *.gif *.svg *.ico *.webp
+	}
+	header @assets Cache-Control "public, max-age=31536000, immutable"
+
+	log {
+		output stdout
+		# Staff coupon requests carry a shared secret in this header. Never write it
+		# to the Docker access log.
+		format filter {
+			request>headers>X-Coupon-Token delete
+			wrap console
+		}
+		level INFO
+	}
+}

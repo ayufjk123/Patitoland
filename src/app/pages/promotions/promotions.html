@@ -1,0 +1,86 @@
+<section class="promotions-page">
+  <div class="promotions-header animate-bounce-in">
+    <h1><i class="fas fa-tags"></i> {{ 'PROMOTIONS.TITLE' | translate }}</h1>
+    <p class="subtitle">{{ 'PROMOTIONS.SUBTITLE' | translate }}</p>
+  </div>
+
+  <div class="promos-container">
+    <!-- October promotion -->
+    <div class="promo-card october-promo animate-fade-up">
+      <div class="promo-badge limited">
+        <i class="fas fa-calendar-day"></i> {{ 'PROMOTIONS.OCTOBER_BADGE' | translate }}
+      </div>
+      <div class="promo-icon">
+        <i class="fas fa-leaf"></i>
+      </div>
+      <h2>{{ 'PROMOTIONS.OCTOBER_TITLE' | translate }}</h2>
+      <p class="promo-desc">{{ 'PROMOTIONS.OCTOBER_DESC' | translate }}</p>
+
+      <div class="october-includes">
+        <span><i class="fas fa-clock"></i> {{ 'PROMOTIONS.OCTOBER_HOURS' | translate }}</span>
+        <span><i class="fas fa-bottle-water"></i> {{ 'PROMOTIONS.OCTOBER_WATER' | translate }}</span>
+      </div>
+
+      <div class="promo-options">
+        <div class="option-card">
+          <div class="option-label">{{ 'PROMOTIONS.OCTOBER_DAYS' | translate }}</div>
+          <div class="price-highlight"><strong>15€</strong></div>
+        </div>
+      </div>
+
+      <div class="october-under2">
+        <h3><i class="fas fa-baby"></i> {{ 'PROMOTIONS.OCTOBER_UNDER2_TITLE' | translate }}</h3>
+        <div class="under2-price-row">
+          <span>{{ 'PROMOTIONS.OCTOBER_DAYS' | translate }}</span>
+          <strong>7,50€</strong>
+        </div>
+        <p><i class="fas fa-id-card"></i> {{ 'PROMOTIONS.OCTOBER_UNDER2_ID' | translate }}</p>
+      </div>
+
+      <div class="promo-days">
+        <i class="fas fa-calendar-day"></i>
+        {{ 'PROMOTIONS.OCTOBER_UNTIL' | translate }}
+      </div>
+      <div class="promo-terms">
+        {{ 'PROMOTIONS.OCTOBER_TERMS' | translate }}
+      </div>
+    </div>
+
+    <!-- Promo Familia Numerosa y Discapacidad -->
+    <div class="promo-card family-promo animate-fade-up delay-200">
+      <div class="promo-badge permanent">
+        <i class="fas fa-heart"></i> {{ 'PROMOTIONS.PERMANENT' | translate }}
+      </div>
+      <div class="promo-icon">
+        <i class="fas fa-users"></i>
+      </div>
+      <h2>{{ 'PROMOTIONS.FAMILY_TITLE' | translate }}</h2>
+      <p class="promo-desc">{{ 'PROMOTIONS.FAMILY_DESC' | translate }}</p>
+
+      <div class="promo-options">
+        <div class="option-card">
+          <div class="option-label">{{ 'PROMOTIONS.OPTION' | translate }} A</div>
+          <div class="deal-highlight">
+            <span class="pay">{{ 'PROMOTIONS.PAY' | translate }} <strong>1h</strong></span>
+            <i class="fas fa-arrow-right"></i>
+            <span class="play">{{ 'PROMOTIONS.PLAY' | translate }} <strong>2h</strong></span>
+          </div>
+        </div>
+        <div class="option-divider">{{ 'PROMOTIONS.OR' | translate }}</div>
+        <div class="option-card">
+          <div class="option-label">{{ 'PROMOTIONS.OPTION' | translate }} B</div>
+          <div class="deal-highlight">
+            <span class="pay">{{ 'PROMOTIONS.PAY_HALF' | translate }}</span>
+            <i class="fas fa-arrow-right"></i>
+            <span class="play">{{ 'PROMOTIONS.PLAY' | translate }} <strong>1h</strong></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="promo-note">
+        <i class="fas fa-id-card"></i>
+        {{ 'PROMOTIONS.FAMILY_NOTE' | translate }}
+      </div>
+    </div>
+  </div>
+</section>

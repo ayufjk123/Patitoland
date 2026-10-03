@@ -1,0 +1,21 @@
+[Unit]
+Description=Monitor PatitoLand production services and send alerts
+Requires=docker.service
+After=docker.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=ubuntu
+Group=ubuntu
+ExecStart=/opt/patitoland/Patitoland/scripts/aws-monitor.sh
+NoNewPrivileges=true
+PrivateDevices=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/opt/patitoland/monitor-state
+RestrictSUIDSGID=true
+
+[Install]
+WantedBy=multi-user.target
