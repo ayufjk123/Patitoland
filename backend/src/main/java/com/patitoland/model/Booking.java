@@ -53,6 +53,12 @@ public class Booking {
 
     private LocalDateTime depositPaidAt;
 
+    /** How the deposit was collected at the POS: TRANSFERENCIA / EFECTIVO (nullable). */
+    private String depositMethod;
+
+    /** Optional transfer reference number for TRANSFERENCIA deposits. */
+    private String depositReference;
+
     private LocalDateTime paidAt;
 
     /** Booking lifecycle: PENDIENTE / CONFIRMADA / COMPLETADA / CANCELADA. */
@@ -116,6 +122,12 @@ public class Booking {
 
     public LocalDateTime getDepositPaidAt() { return depositPaidAt; }
     public void setDepositPaidAt(LocalDateTime depositPaidAt) { this.depositPaidAt = depositPaidAt; }
+
+    public String getDepositMethod() { return depositMethod; }
+    public void setDepositMethod(String depositMethod) { this.depositMethod = depositMethod; }
+
+    public String getDepositReference() { return depositReference; }
+    public void setDepositReference(String depositReference) { this.depositReference = depositReference; }
 
     public LocalDateTime getPaidAt() { return paidAt; }
     public void setPaidAt(LocalDateTime paidAt) { this.paidAt = paidAt; }

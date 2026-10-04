@@ -32,6 +32,7 @@ public class InternalBookingController {
     private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm");
     private static final Pattern LEADING_NUMBER = Pattern.compile("^\\s*(\\d+)");
     private static final Set<String> VALID_STATUSES = Set.of("PENDIENTE", "CONFIRMADA", "COMPLETADA", "CANCELADA");
+    private static final Set<String> VALID_DEPOSIT_METHODS = Set.of("TRANSFERENCIA", "EFECTIVO");
 
     private final BookingRepository bookingRepository;
 
@@ -105,12 +106,27 @@ public class InternalBookingController {
             return ResponseEntity.badRequest().body(Map.of("error", "amountCents must be a positive integer"));
         }
         Booking b = found.get();
-        // Idempotent: once COBRADO, return current state without recording again.
+        // Idempotent: once COBRADO, return current state without recording again;
+        // only backfill method/reference if they were never recorded.
         if ("COBRADO".equals(b.getDepositStatus())) {
+            boolean dirty = false;
+            String method = depositMethod(body);
+            if (method != null && b.getDepositMethod() == null) {
+                b.setDepositMethod(method);
+                dirty = true;
+            }
+            String reference = reference(body);
+            if (reference != null && b.getDepositReference() == null) {
+                b.setDepositReference(reference);
+                dirty = true;
+            }
+            if (dirty) bookingRepository.save(b);
             return ResponseEntity.ok(toDto(b));
         }
         b.setDepositAmountCents(amountCents);
         b.setDepositStatus("COBRADO");
+        b.setDepositMethod(depositMethod(body));
+        b.setDepositReference(reference(body));
         String posOrderId = posOrderId(body);
         if (posOrderId != null) b.setPosDepositOrderId(posOrderId);
         b.setDepositPaidAt(LocalDateTime.now());
@@ -208,6 +224,25 @@ public class InternalBookingController {
         return text.isEmpty() ? null : text;
     }
 
+    /**
+     * Deposit collection method. Only TRANSFERENCIA / EFECTIVO are accepted;
+     * anything else (or blank) is ignored as null for backward compatibility.
+     */
+    private String depositMethod(Map<String, Object> body) {
+        Object value = body.get("method");
+        if (value == null) return null;
+        String text = value.toString().trim().toUpperCase(Locale.ROOT);
+        return VALID_DEPOSIT_METHODS.contains(text) ? text : null;
+    }
+
+    /** Optional transfer reference; trimmed, blank becomes null. */
+    private String reference(Map<String, Object> body) {
+        Object value = body.get("reference");
+        if (value == null) return null;
+        String text = value.toString().trim();
+        return text.isEmpty() ? null : text;
+    }
+
     private List<Map<String, Object>> toDtoList(List<Booking> bookings) {
         return bookings.stream().map(this::toDto).collect(Collectors.toList());
     }
@@ -229,6 +264,8 @@ public class InternalBookingController {
         // extra detail
         m.put("depositStatus", b.getDepositStatus() != null ? b.getDepositStatus() : "PENDIENTE");
         m.put("depositAmountCents", b.getDepositAmountCents());
+        m.put("depositMethod", b.getDepositMethod());
+        m.put("depositReference", b.getDepositReference());
         m.put("paymentStatus", b.getPaymentStatus() != null ? b.getPaymentStatus() : "PENDIENTE");
         m.put("paidAmountCents", b.getPaidAmountCents());
         m.put("posDepositOrderId", b.getPosDepositOrderId());
