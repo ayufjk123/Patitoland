@@ -26,6 +26,14 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query("delete from Booking b where (b.source is null or b.source <> 'WEB') and (b.tariff is null or b.tariff <> 'WEB')")
     void deleteSheetSourced();
 
+    /**
+     * Selects all sheet-sourced bookings (same criteria as {@link #deleteSheetSourced()}),
+     * used by the Google Sheets sync to upsert by stable identity instead of deleting
+     * and reinserting every row.
+     */
+    @Query("select b from Booking b where (b.source is null or b.source <> 'WEB') and (b.tariff is null or b.tariff <> 'WEB')")
+    List<Booking> findSheetSourced();
+
     /** Fuzzy search across customer-facing fields for the internal POS API. */
     @Query("select b from Booking b where lower(b.parentName) like lower(concat('%', :q, '%'))"
             + " or lower(b.phone) like lower(concat('%', :q, '%'))"

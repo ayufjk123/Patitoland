@@ -17,8 +17,10 @@ import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Service
@@ -58,12 +60,9 @@ public class GoogleSheetsSync {
 
             List<Booking> bookings = parseCsv(response.body());
 
-            // Refresh only sheet-sourced rows; website bookings (tariff = 'WEB') are
-            // persisted and must survive the sync (the form does not write to the sheet).
-            bookingRepository.deleteSheetSourced();
-            bookingRepository.saveAll(bookings);
-
-            log.info("Sync complete. Saved {} sheet bookings (web bookings preserved).", bookings.size());
+            // Upsert sheet-sourced rows by stable identity instead of delete-all + reinsert,
+            // so POS payment data written to bookings rows (and their ids) survive the sync.
+            reconcileSheetBookings(bookings);
         } catch (Exception e) {
             log.error("Error during Google Sheets sync", e);
         }
@@ -120,6 +119,99 @@ public class GoogleSheetsSync {
         }
 
         return bookings;
+    }
+
+    /**
+     * Reconciles parsed sheet bookings with the DB using a stable identity key
+     * (timestamp + phone + parentName + reservationDateTime) instead of deleting and
+     * reinserting all sheet rows. Existing rows keep their id and all POS payment
+     * fields; only sheet-side fields are refreshed. Sheet rows missing from the CSV
+     * are deleted only when they carry no POS payment data.
+     */
+    void reconcileSheetBookings(List<Booking> csvBookings) {
+        List<Booking> existing = bookingRepository.findSheetSourced();
+
+        Map<SheetKey, Booking> existingByKey = new HashMap<>();
+        for (Booking b : existing) {
+            existingByKey.putIfAbsent(SheetKey.from(b), b);
+        }
+
+        Set<SheetKey> csvKeys = new HashSet<>();
+        List<Booking> toInsert = new ArrayList<>();
+        int updated = 0;
+        for (Booking csvBooking : csvBookings) {
+            SheetKey key = SheetKey.from(csvBooking);
+            csvKeys.add(key);
+            Booking match = existingByKey.get(key);
+            if (match != null) {
+                // Update only sheet-side fields on the managed entity; never touch
+                // id, status, or any POS payment field.
+                match.setEmail(csvBooking.getEmail());
+                match.setChildrenNames(csvBooking.getChildrenNames());
+                match.setChildrenCount(csvBooking.getChildrenCount());
+                match.setRoomPreference(csvBooking.getRoomPreference());
+                match.setTariff(csvBooking.getTariff());
+                match.setNotes(csvBooking.getNotes());
+                updated++;
+            } else {
+                toInsert.add(csvBooking);
+            }
+        }
+        if (!toInsert.isEmpty()) {
+            bookingRepository.saveAll(toInsert);
+        }
+
+        List<Booking> toDelete = new ArrayList<>();
+        int keptWithPosData = 0;
+        for (Booking b : existing) {
+            if (csvKeys.contains(SheetKey.from(b))) continue;
+            if (hasPosPaymentData(b)) {
+                keptWithPosData++;
+                log.warn("Sheet booking id={} ('{}', {}) was removed from the sheet but has POS "
+                        + "payment data; keeping it for manual review.",
+                        b.getId(), b.getParentName(), b.getReservationDateTime());
+            } else {
+                toDelete.add(b);
+            }
+        }
+        if (!toDelete.isEmpty()) {
+            bookingRepository.deleteAll(toDelete);
+        }
+
+        log.info("Sheet sync complete: {} inserted, {} updated, {} deleted, {} kept (POS payment data).",
+                toInsert.size(), updated, toDelete.size(), keptWithPosData);
+    }
+
+    private static boolean hasPosPaymentData(Booking b) {
+        return b.getDepositAmountCents() != null
+                || b.getPaidAmountCents() != null
+                || b.getPosDepositOrderId() != null
+                || b.getPosPaymentOrderId() != null;
+    }
+
+    /**
+     * Stable identity of a sheet booking: the Google Form submission timestamp plus
+     * phone, parent name, and reservation date/time. Strings are trimmed and
+     * lowercased, null-safe.
+     */
+    private record SheetKey(
+            LocalDateTime timestamp,
+            String phone,
+            String parentName,
+            LocalDateTime reservationDateTime
+    ) {
+        private static SheetKey from(Booking booking) {
+            return new SheetKey(
+                    booking.getTimestamp(),
+                    normalize(booking.getPhone()),
+                    normalize(booking.getParentName()),
+                    booking.getReservationDateTime()
+            );
+        }
+
+        private static String normalize(String value) {
+            return value == null ? null : value.trim().toLowerCase();
+        }
     }
 
     private record BookingIdentity(
